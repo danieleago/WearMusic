@@ -105,7 +105,7 @@ public class MainActivity extends Activity
         super.onStop();
     }
 
-    @Override
+            @Override
     public void onConnected(Bundle connectionHint) {
         Log.d(TAG, "onConnected: " + connectionHint);
     }

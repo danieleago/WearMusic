@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -31,8 +32,10 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
@@ -46,6 +49,8 @@ import it.unipi.wearmusic.util.Song;
 import it.unipi.wearmusic.util.SongAdapter;
 
 import static android.content.ContentValues.TAG;
+import static android.media.AudioManager.ADJUST_LOWER;
+import static android.media.AudioManager.ADJUST_RAISE;
 
 
 public class MainActivity extends Activity implements MediaPlayerControl, DataApi.DataListener,
@@ -63,10 +68,15 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     private boolean paused=false, playbackPaused=false;
     private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
+    public static String SERVICE_CALLED_WEAR = "WearListClicked";
+    private AudioManager managerAudio;
+
+
     @Override
     protected void onStart() {
         super.onStart();
 
+        mGoogleApiClient.connect();
         if(playIntent==null){
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
@@ -78,7 +88,8 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+        managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        Log.e(TAG, " orca \n");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
@@ -386,6 +397,8 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+
+
         for(DataEvent event : dataEvents) {
             if(event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
@@ -393,11 +406,10 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
                 if(item.getUri().getPath().compareTo("/Command") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateCommand((String)dataMap.get(COMMAND_KEY));
+
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 // DataItem deleted
-            }else{
-                playPrev();
             }
         }
     }
@@ -405,21 +417,17 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(mess.compareTo("play")==0){
+                if(mess.compareTo("avanti")==0){
                     playNext();
                 }else if(mess.compareTo("pause")==0){
-                    playbackPaused=true;
-                }else if(mess.compareTo("dietro")==0){
-                    playPrev();
-                }else if(mess.compareTo("avanti")==0){
-                    playNext();
-                }else{
-                    playNext();
+                    pause();
+                }else if(mess.compareTo("volumegiu")==0){
+                    managerAudio.adjustVolume(ADJUST_LOWER,0);
+                }else if(mess.compareTo("volumesu")==0){
+                    managerAudio.adjustVolume(ADJUST_RAISE,0);
                 }
             }
         });
     }
-
-
 
 }

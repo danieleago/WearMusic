@@ -163,7 +163,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             if(gX > DIRECTION_THRESHOLD && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
                 mTextValues.append("UP\n");
-                sendCommand("play");
+                sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
             }
             //DOWN
@@ -171,7 +171,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 mView.setBackgroundColor(Color.rgb(100, 100, 0));
                 mTextValues.append("DOWN\n");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-                sendCommand("pause");
+                sendCommand("volumegiu");
             }
             //LEFT
             else if(gY < (- DIRECTION_THRESHOLD) && gForce < SHAKE_THRESHOLD) {
@@ -187,7 +187,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 mTextValues.append("RIGHT\n");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
-                sendCommand("dietro");
+                sendCommand("pause");
             }
             else {
                 mView.setBackgroundColor(Color.BLACK);
