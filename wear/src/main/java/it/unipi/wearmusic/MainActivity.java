@@ -35,31 +35,12 @@ public class MainActivity extends Activity
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "WearMusic";
     private static final String PRESSURE_KEY = "command";
-    private static final float SHAKE_THRESHOLD = 1.2f;
-    private static final float DIRECTION_THRESHOLD = 0.8f;
-    private static final int DIRECTION_TIME_MS = 500;
-    private static final float ROTATION_THRESHOLD = 5.0f;
-    private static final int ROTATION_WAIT_TIME_MS = 700;
-
-    private View mView;
-    private TextView mTextTitle;
-    private TextView mTextValues;
-    private SensorManager mSensorManager;
-    private Sensor accelerometer;
-    private int mSensorType;
-    private long mShakeTime = 0;
-    private long mRotationTime = 0;
-    private SensorManager sensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Wearable.API)
-                .build();
+        setupConnection();
 
         setContentView(R.layout.activity_main);
 
@@ -81,16 +62,13 @@ public class MainActivity extends Activity
     }
 
 
-    private void setupAccelerometer(){
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-
-    }
-
 
     private void setupConnection(){
-
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Wearable.API)
+                .build();
     }
 
 
@@ -102,19 +80,22 @@ public class MainActivity extends Activity
             mGoogleApiClient.connect();
 
     }
+
     @Override
     protected void onStop() {
         super.onStop();
     }
 
-            @Override
+    @Override
     public void onConnected(Bundle connectionHint) {
         Log.d(TAG, "onConnected: " + connectionHint);
     }
+
     @Override
     public void onConnectionSuspended(int cause) {
         Log.d(TAG, "onConnectionSuspended: " + cause);
     }
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         Log.d(TAG, "onConnectionFailed: " + result);
@@ -131,4 +112,4 @@ public class MainActivity extends Activity
     }
 
 
-        }
+}

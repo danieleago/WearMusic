@@ -38,8 +38,9 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final float SHAKE_THRESHOLD = 1.2f;
-    private static final float DIRECTION_THRESHOLD = 0.9f;
-    private static final int DIRECTION_TIME_MS = 500;
+    private static final float DIRECTION_THRESHOLD_MIN = 0.6f;
+    private static final float DIRECTION_THRESHOLD_MAX = 1f;
+    private static final int DIRECTION_TIME_MS =700;
     private static final float ROTATION_THRESHOLD = 5.0f;
     private static final int ROTATION_WAIT_TIME_MS = 700;
 
@@ -55,6 +56,10 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private int mSensorType;
     private long mShakeTime = 0;
     private long mRotationTime = 0;
+    Vibrator vibrator;
+    long[] vibrationPattern = {0, 100, 300, 100};
+    //-1 - don't repeat
+    final int indexInPatternToRepeat = -1;
 
     public static SensorFragment newInstance(int sensorType , GoogleApiClient mGAC ) {
         SensorFragment f = new SensorFragment();
@@ -70,6 +75,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
 
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
@@ -90,7 +96,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         mView = inflater.inflate(R.layout.sensor, container, false);
 
         mTextTitle = (TextView) mView.findViewById(R.id.text_title);
-        mTextTitle.setText("PD");
+        mTextTitle.setText("scegli il comando");
         mTextValues = (TextView) mView.findViewById(R.id.text_values);
 
         return mView;
@@ -102,7 +108,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
 
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL*5);
     }
 
     @Override
@@ -118,12 +124,14 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         {
             return;
         }
-
+        /*
         mTextValues.setText(
                 "x = " + Float.toString(event.values[0]) + "\n" +
                 "y = " + Float.toString(event.values[1]) + "\n" +
                 "z = " + Float.toString(event.values[2]) + "\n"
         );
+        */
+
 
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             detectShake(event);
@@ -144,12 +152,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     //  - http://code.tutsplus.com/tutorials/using-the-accelerometer-on-android--mobile-22125
     private void detectShake(SensorEvent event) {
         long now = System.currentTimeMillis();
-        Vibrator vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
-        long[] vibrationPattern = {0, 100, 300, 100};
 
 
-        //-1 - don't repeat
-        final int indexInPatternToRepeat = -1;
 
         if((now - mShakeTime) > DIRECTION_TIME_MS) {
             mShakeTime = now;
@@ -165,33 +169,35 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             // otherwise, reset the color
 
             //UP
-            if(gX > DIRECTION_THRESHOLD && gForce < SHAKE_THRESHOLD ) {
+            if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
-                mTextValues.append("UP\n");
+                mTextValues.setText("volumesu\n");
                 sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
             }
+
             //DOWN
-            else if(gX < (- DIRECTION_THRESHOLD) && gForce < SHAKE_THRESHOLD ) {
+            else if(gX < (- DIRECTION_THRESHOLD_MIN) && gX > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 100, 0));
-                mTextValues.append("DOWN\n");
+                mTextValues.setText("volumegiu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("volumegiu");
             }
+
             //LEFT
-            else if(gY < (- DIRECTION_THRESHOLD) && gForce < SHAKE_THRESHOLD) {
+            else if(gY < (- DIRECTION_THRESHOLD_MIN) && gY > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD) {
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
-                mTextValues.append("LEFT\n");
+                mTextValues.setText("avanti");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
                 sendCommand("avanti");
             }
-            //RIGHT
-            else if(gY > DIRECTION_THRESHOLD && gForce < SHAKE_THRESHOLD ) {
-                mView.setBackgroundColor(Color.rgb(0, 0, 100));
-                mTextValues.append("RIGHT\n");
-                vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
+            //RIGHT
+            else if(gY > DIRECTION_THRESHOLD_MIN && gY < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
+                mView.setBackgroundColor(Color.rgb(0, 0, 100));
+                mTextValues.setText("pause/play\n");
+                vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("pause");
             }
             else {

@@ -69,7 +69,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private boolean paused=false, playbackPaused=false;
     private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
-    public static String SERVICE_CALLED_WEAR = "WearListClicked";
     private AudioManager managerAudio;
 
     @Override
@@ -93,7 +92,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        
+
+
 
         requestPermission();
         songView = (ListView)findViewById(R.id.song_list);
@@ -418,7 +418,10 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 if(mess.compareTo("avanti")==0){
                     playNext();
                 }else if(mess.compareTo("pause")==0){
-                    pause();
+                    if(isPlaying())
+                        pause();
+                    else
+                        start();
                 }else if(mess.compareTo("volumegiu")==0){
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
                 }else if(mess.compareTo("volumesu")==0){
@@ -432,8 +435,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().equals("/wear_message")) {
             String msg = new String(messageEvent.getData());
-
-            Log.i(TAG, " bla sdaasd "+ msg);
             updateCommand(msg);
         }
     }
