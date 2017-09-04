@@ -93,6 +93,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        
 
         requestPermission();
         songView = (ListView)findViewById(R.id.song_list);
