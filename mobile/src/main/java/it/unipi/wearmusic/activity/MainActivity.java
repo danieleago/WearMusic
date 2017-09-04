@@ -14,10 +14,26 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +45,12 @@ import it.unipi.wearmusic.util.MusicService;
 import it.unipi.wearmusic.util.Song;
 import it.unipi.wearmusic.util.SongAdapter;
 
+import static android.content.ContentValues.TAG;
 
-public class MainActivity extends Activity implements MediaPlayerControl {
+
+public class MainActivity extends Activity implements MediaPlayerControl, DataApi.DataListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE =1 ;
@@ -41,10 +61,12 @@ public class MainActivity extends Activity implements MediaPlayerControl {
     private boolean musicBound=false;
     private MusicController controller;
     private boolean paused=false, playbackPaused=false;
-
+    private static final String COMMAND_KEY = "command";
+    private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onStart() {
         super.onStart();
+
         if(playIntent==null){
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
@@ -56,6 +78,13 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
 
         requestPermission();
         songView = (ListView)findViewById(R.id.song_list);
@@ -215,6 +244,9 @@ public class MainActivity extends Activity implements MediaPlayerControl {
     protected void onPause(){
         super.onPause();
         paused=true;
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
+
     }
 
     @Override
@@ -224,11 +256,16 @@ public class MainActivity extends Activity implements MediaPlayerControl {
             setController();
             paused=false;
         }
+        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         controller.hide();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+
         super.onStop();
     }
 
@@ -330,4 +367,59 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         }
         controller.show(0);
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(TAG, "connected");
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d(TAG, "onConnectionSuspended: " + cause);
+    }
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "connection failed");
+    }
+
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        for(DataEvent event : dataEvents) {
+            if(event.getType() == DataEvent.TYPE_CHANGED) {
+                // DataItem changed
+                DataItem item = event.getDataItem();
+                if(item.getUri().getPath().compareTo("/Command") == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    updateCommand((String)dataMap.get(COMMAND_KEY));
+                }
+            } else if (event.getType() == DataEvent.TYPE_DELETED) {
+                // DataItem deleted
+            }else{
+                playPrev();
+            }
+        }
+    }
+    private void updateCommand(final String mess) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mess.compareTo("play")==0){
+                    playNext();
+                }else if(mess.compareTo("pause")==0){
+                    playbackPaused=true;
+                }else if(mess.compareTo("dietro")==0){
+                    playPrev();
+                }else if(mess.compareTo("avanti")==0){
+                    playNext();
+                }else{
+                    playNext();
+                }
+            }
+        });
+    }
+
+
+
 }

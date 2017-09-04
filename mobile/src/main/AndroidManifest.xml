@@ -22,7 +22,12 @@
             </intent-filter>
         </activity>
         <service android:name=".util.MusicService" />
-
+        <service android:name=".util.ListenerService">
+            <intent-filter>
+                    <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                    <data android:scheme="wear" android:host="*" android:pathPrefix="/request-network" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
