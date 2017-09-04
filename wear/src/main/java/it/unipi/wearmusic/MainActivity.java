@@ -23,11 +23,13 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 
 
 public class MainActivity extends Activity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        implements  GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
         {
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
@@ -129,5 +131,4 @@ public class MainActivity extends Activity
     }
 
 
-
-}
+        }

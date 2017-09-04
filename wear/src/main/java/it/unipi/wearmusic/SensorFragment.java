@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.view.WatchViewStub;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class SensorFragment extends Fragment implements SensorEventListener,
@@ -39,7 +44,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private static final int ROTATION_WAIT_TIME_MS = 700;
 
     private static final String COMMAND_KEY = "command";
-
+    private static final String TAG = "HandheldActivity";
     private static GoogleApiClient mGoogleApiClient;
 
     private View mView;
@@ -230,18 +235,48 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
     }
 
-    private void sendCommand(String mess) {
-
+    private void sendCommand(String msg) {
+/*
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
         if(mGoogleApiClient!=null){
             PutDataMapRequest putDataMapReq =
                     PutDataMapRequest.create("/Command");
-                    putDataMapReq.getDataMap().putString(COMMAND_KEY, mess);
+                    putDataMapReq.getDataMap().putString(COMMAND_KEY, msg);
             PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
             PendingResult<DataApi.DataItemResult> pendingResult =
                     Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        }
+        }*/
 
+        Log.i(TAG, "SEND MESSAGE DIO CAN");
+        new SenderThread("/wear_message", msg).start();
+
+    }
+
+    class SenderThread extends Thread {
+        String path;
+        String msg;
+        SenderThread(String p, String m) {
+            path = p;
+            msg = m;
+        }
+        public void run() {
+
+            Log.i(TAG, "Dio");
+            NodeApi.GetConnectedNodesResult nodes =
+                    Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+            for (Node node : nodes.getNodes()) {
+                MessageApi.SendMessageResult result =
+                        Wearable.MessageApi.sendMessage(mGoogleApiClient,
+                                node.getId(),
+                                path,
+                                msg.getBytes()).await();
+                if (result.getStatus().isSuccess()) {
+                    Log.i(TAG, "Message sent to 2121 " + node.getDisplayName());
+                } else {
+                    Log.i(TAG, "Failure sending to " + node.getDisplayName());
+                }
+            }
+        }
     }
 }

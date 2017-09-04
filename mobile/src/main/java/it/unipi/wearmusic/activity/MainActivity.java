@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import it.unipi.wearmusic.R;
+import it.unipi.wearmusic.util.ListenerService;
 import it.unipi.wearmusic.util.MusicController;
 import it.unipi.wearmusic.util.MusicService;
 import it.unipi.wearmusic.util.Song;
@@ -53,7 +54,7 @@ import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 
 
-public class MainActivity extends Activity implements MediaPlayerControl, DataApi.DataListener,
+public class MainActivity extends Activity implements MessageApi.MessageListener,MediaPlayerControl,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -71,7 +72,6 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     public static String SERVICE_CALLED_WEAR = "WearListClicked";
     private AudioManager managerAudio;
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -86,16 +86,13 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        Log.e(TAG, " orca \n");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
 
         requestPermission();
         songView = (ListView)findViewById(R.id.song_list);
@@ -255,7 +252,7 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     protected void onPause(){
         super.onPause();
         paused=true;
-        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
 
     }
@@ -382,7 +379,7 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
-        Wearable.DataApi.addListener(mGoogleApiClient, this);
+        Wearable.MessageApi.addListener(mGoogleApiClient, this);
     }
 
     @Override
@@ -395,9 +392,9 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
     }
 
 
-    @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
 
+    //@Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
 
         for(DataEvent event : dataEvents) {
             if(event.getType() == DataEvent.TYPE_CHANGED) {
@@ -413,7 +410,7 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
             }
         }
     }
-    private void updateCommand(final String mess) {
+    public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -430,4 +427,13 @@ public class MainActivity extends Activity implements MediaPlayerControl, DataAp
         });
     }
 
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        if(messageEvent.getPath().equals("/wear_message")) {
+            String msg = new String(messageEvent.getData());
+
+            Log.i(TAG, " bla sdaasd "+ msg);
+            updateCommand(msg);
+        }
+    }
 }
