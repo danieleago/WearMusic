@@ -17,9 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.view.View.OnClickListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -56,15 +59,17 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private Sensor mSensor;
     private int mSensorType;
     private long mShakeTime = 0;
-    private long mRotationTime = 0;
+    private boolean gesture = false;
+
     Vibrator vibrator;
     long[] vibrationPattern = {0, 100, 300, 100};
     //-1 - don't repeat
     final int indexInPatternToRepeat = -1;
 
-    public static SensorFragment newInstance(int sensorType , GoogleApiClient mGAC ) {
+    public static SensorFragment newInstance(int sensorType , GoogleApiClient mGAC) {
         SensorFragment f = new SensorFragment();
         mGoogleApiClient = mGAC;
+
         // Supply sensorType as an argument
         Bundle args = new Bundle();
         args.putInt("sensorType", sensorType);
@@ -72,49 +77,119 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
         return f;
     }
+    ImageButton.OnClickListener listener = new ImageButton.OnClickListener()
+    {
+
+        @Override
+        public void onClick(View v)
+        {
+            int id = v.getId();
+            ImageView img;
+
+            switch (id){
+
+                case R.id.Next:
+                    sendCommand("avanti");
+                    //img= (ImageView) mView.findViewById(R.id.Next);
+                    //img.setImageResource(R.drawable.img_btn_next_pressed);
+                    break;
+
+                case R.id.Previous:
+                    sendCommand("dietro");
+                    //img= (ImageView) mView.findViewById(R.id.Previous);
+                    //img.setImageResource(R.drawable.img_btn_previous_pressed);
+                    break;
+                case R.id.Play:
+                    sendCommand("pause");
+                    //img= (ImageView) mView.findViewById(R.id.Next);
+                    //img.setImageResource(R.drawable.img_btn_next_pressed);
+                    break;
+
+                case R.id.Minus:
+                    sendCommand("volumegiu");
+                    //img= (ImageView) mView.findViewById(R.id.Previous);
+                    //img.setImageResource(R.drawable.img_btn_previous_pressed);
+                    break;
+                case R.id.Plus:
+                    sendCommand("volumesu");
+                    //img= (ImageView) mView.findViewById(R.id.Next);
+                    //img.setImageResource(R.drawable.img_btn_next_pressed);
+                    break;
+
+
+            }
+            Log.i(TAG, "BUTTON TO IMPLEMENT");
+        }
+    };
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
+
 
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
+
 
         Bundle args = getArguments();
         if(args != null) {
             mSensorType = args.getInt("sensorType");
         }
 
-        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(mSensorType);
+        if(mSensorType!=-1) {
+            mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+            mSensor = mSensorManager.getDefaultSensor(mSensorType);
+        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mView = inflater.inflate(R.layout.sensor, container, false);
+        if(mSensorType!=-1) {
 
-        mTextTitle = (TextView) mView.findViewById(R.id.text_title);
-        mTextTitle.setText("scegli il comando");
-        mTextValues = (TextView) mView.findViewById(R.id.text_values);
+            mView = inflater.inflate(R.layout.sensor, container, false);
+            gesture = true;
+            mTextTitle = (TextView) mView.findViewById(R.id.text_title);
+            mTextTitle.setText("scegli il comando");
+            mTextValues = (TextView) mView.findViewById(R.id.text_values);
+        }else{
+            gesture = false;
+            Log.i(TAG, " valore " + String.valueOf(mSensorType));
+            mView = inflater.inflate(R.layout.button, container, false);
+            ImageButton bn = (ImageButton)mView.findViewById(R.id.Next);
+            ImageButton bpl = (ImageButton)mView.findViewById(R.id.Play);
+            ImageButton bpr = (ImageButton)mView.findViewById(R.id.Previous);
+            ImageButton bminus = (ImageButton)mView.findViewById(R.id.Minus);
+            ImageButton bplus = (ImageButton)mView.findViewById(R.id.Plus);
+            bn.setOnClickListener(listener);
+            bpl.setOnClickListener(listener);
+            bpr.setOnClickListener(listener);
+            bminus.setOnClickListener(listener);
+            bplus.setOnClickListener(listener);
+
+        }
 
         return mView;
     }
+
+
+
 
     @Override
     public void onResume() {
         super.onResume();
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
-
+        if(mSensorType!=-1)
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL*5);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if(mSensorType!=-1)
         mSensorManager.unregisterListener(this);
     }
 
@@ -125,6 +200,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         {
             return;
         }
+
         /*
         mTextValues.setText(
                 "x = " + Float.toString(event.values[0]) + "\n" +
@@ -134,12 +210,11 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         */
 
 
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && gesture) {
             detectShake(event);
         }
-        else if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            detectRotation(event);
-        }
+
+
     }
 
     @Override
@@ -186,10 +261,16 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //LEFT
             else if(gY < (- DIRECTION_THRESHOLD_MIN) && gY > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD) {
-
+                /*
                 ImageView img= (ImageView) mView.findViewById(R.id.Next);
-                img.setImageResource(R.drawable.img_btn_next_pressed);
+                if(img == null){
+                    Log.d(TAG, "img null");
+                }else{
+                    Log.d(TAG, "img not null");
 
+                    img.setImageResource(R.drawable.img_btn_next_pressed);
+                }
+                */
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
                 mTextValues.setText("avanti");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
@@ -199,9 +280,15 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //RIGHT
             else if(gY > DIRECTION_THRESHOLD_MIN && gY < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
+                /*
+                ImageView img= (ImageView) mView.findViewById(R.);
+                if(img == null){
+                    Log.d(TAG, "img null");
+                }else{
 
-                ImageView img= (ImageView) mView.findViewById(R.id.Previous);
-                img.setImageResource(R.drawable.img_btn_previous_pressed);
+                    img.setImageResource(R.drawable.img_btn_previous_pressed);
+                    Log.d(TAG, "img not null");
+                }*/
 
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
                 mTextValues.setText("pause/play\n");
@@ -209,36 +296,15 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 sendCommand("pause");
             }
             else {
+                /*
 
-                ImageView img= (ImageView) mView.findViewById(R.id.Next);
-                img.setImageResource(R.drawable.img_btn_next);
-                img= (ImageView) mView.findViewById(R.id.Previous);
-                img.setImageResource(R.drawable.img_btn_previous);
-
+                */
                 mView.setBackgroundColor(Color.BLACK);
             }
         }
     }
 
-    private void detectRotation(SensorEvent event) {
-        long now = System.currentTimeMillis();
 
-        if((now - mRotationTime) > ROTATION_WAIT_TIME_MS) {
-            mRotationTime = now;
-
-            // Change background color if rate of rotation around any
-            // axis and in any direction exceeds threshold;
-            // otherwise, reset the color
-            if(Math.abs(event.values[0]) > ROTATION_THRESHOLD ||
-               Math.abs(event.values[1]) > ROTATION_THRESHOLD ||
-               Math.abs(event.values[2]) > ROTATION_THRESHOLD) {
-                mView.setBackgroundColor(Color.rgb(0, 100, 0));
-            }
-            else {
-                mView.setBackgroundColor(Color.BLACK);
-            }
-        }
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -255,29 +321,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
     }
 
-    public void buttonClick(View view){
-
-        int id = view.getId();
-        ImageView img;
-
-        switch (id){
-
-            case R.id.Next:
-                sendCommand("avanti");
-                img= (ImageView) mView.findViewById(R.id.Next);
-                img.setImageResource(R.drawable.img_btn_next_pressed);
-                break;
-
-            case R.id.Previous:
-                sendCommand("pause");
-                img= (ImageView) mView.findViewById(R.id.Previous);
-                img.setImageResource(R.drawable.img_btn_previous_pressed);
-                break;
-
-            default: Log.i(TAG, "BUTTON TO IMPLEMENT");
-
-        }
-    }
 
     private void sendCommand(String msg) {
 /*
@@ -296,7 +339,30 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         new SenderThread("/wear_message", msg).start();
 
     }
+/*
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        ImageView img;
 
+        switch (id){
+
+            case R.id.Next:
+                sendCommand("avanti");
+                //img= (ImageView) mView.findViewById(R.id.Next);
+                //img.setImageResource(R.drawable.img_btn_next_pressed);
+                break;
+
+            case R.id.Previous:
+                sendCommand("pause");
+                //img= (ImageView) mView.findViewById(R.id.Previous);
+                //img.setImageResource(R.drawable.img_btn_previous_pressed);
+                break;
+
+        }
+        Log.i(TAG, "BUTTON TO IMPLEMENT");
+    }
+*/
     class SenderThread extends Thread {
         String path;
         String msg;
@@ -316,7 +382,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                                 path,
                                 msg.getBytes()).await();
                 if (result.getStatus().isSuccess()) {
-                    Log.i(TAG, "Message sent to 2121 " + node.getDisplayName());
+                    Log.i(TAG, "Message sent to " + node.getDisplayName());
                 } else {
                     Log.i(TAG, "Failure sending to " + node.getDisplayName());
                 }

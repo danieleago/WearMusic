@@ -421,7 +421,10 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
                 }else if(mess.compareTo("volumesu")==0){
                     managerAudio.adjustVolume(ADJUST_RAISE,0);
+                }else if(mess.compareTo("dietro")==0){
+                    playPrev();
                 }
+
             }
         });
     }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/black"
+    android:id="@+id/button_view">
+
+    <android.support.wearable.view.GridViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.wearable.view.DotsPageIndicator
+        android:id="@+id/page_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="15dp" />
+
+    <ImageButton
+        android:id="@+id/Plus"
+        android:clickable="true"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_btn_up"
+        />
+    <ImageButton
+
+        android:id="@+id/Minus"
+        android:clickable="true"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="165dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_btn_down"
+        />
+
+    <ImageButton
+        android:id="@+id/Next"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/img_btn_next"
+        android:layout_alignBottom="@+id/Previous"
+        android:layout_alignParentEnd="true"
+    />
+
+    <ImageButton
+        android:id="@+id/Previous"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/img_btn_previous"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        />
+
+    <ImageButton
+        android:id="@+id/Play"
+        android:clickable="true"
+        style="@android:style/Widget.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/img_btn_play"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        />
+</RelativeLayout>

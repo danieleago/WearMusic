@@ -1,9 +1,12 @@
 package it.unipi.wearmusic;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.hardware.Sensor;
 import android.support.wearable.view.FragmentGridPagerAdapter;
+import android.support.wearable.view.WatchViewStub;
+import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -11,7 +14,7 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
     GoogleApiClient mGACA;
     private int[] sensorTypes = {
             Sensor.TYPE_ACCELEROMETER,
-            Sensor.TYPE_GYROSCOPE
+             -1 //Sensor.TYPE_GYROSCOPE //
     };
 
 

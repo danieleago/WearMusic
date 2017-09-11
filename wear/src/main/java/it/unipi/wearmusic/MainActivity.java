@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,9 +29,11 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 
+import it.unipi.wearmusic.util.ListenerService;
+
 
 public class MainActivity extends Activity
-        implements  GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        implements  View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
         {
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
@@ -43,13 +47,9 @@ public class MainActivity extends Activity
         setupConnection();
 
         setContentView(R.layout.activity_main);
-
-
        WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
-
-
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
                 pager.setAdapter(new SensorFragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
 
@@ -111,5 +111,8 @@ public class MainActivity extends Activity
         super.onPause();
     }
 
+    @Override
+    public void onClick(View view) {
 
-}
+            }
+        }
