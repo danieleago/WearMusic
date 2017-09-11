@@ -90,30 +90,20 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
                 case R.id.Next:
                     sendCommand("avanti");
-                    //img= (ImageView) mView.findViewById(R.id.Next);
-                    //img.setImageResource(R.drawable.img_btn_next_pressed);
                     break;
 
                 case R.id.Previous:
                     sendCommand("dietro");
-                    //img= (ImageView) mView.findViewById(R.id.Previous);
-                    //img.setImageResource(R.drawable.img_btn_previous_pressed);
                     break;
                 case R.id.Play:
                     sendCommand("pause");
-                    //img= (ImageView) mView.findViewById(R.id.Next);
-                    //img.setImageResource(R.drawable.img_btn_next_pressed);
                     break;
 
                 case R.id.Minus:
                     sendCommand("volumegiu");
-                    //img= (ImageView) mView.findViewById(R.id.Previous);
-                    //img.setImageResource(R.drawable.img_btn_previous_pressed);
                     break;
                 case R.id.Plus:
                     sendCommand("volumesu");
-                    //img= (ImageView) mView.findViewById(R.id.Next);
-                    //img.setImageResource(R.drawable.img_btn_next_pressed);
                     break;
 
 
