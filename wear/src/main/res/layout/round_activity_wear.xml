@@ -2,7 +2,10 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:onClick="buttonClick">
+
+
 
     <android.support.wearable.view.GridViewPager
         android:id="@+id/pager"
@@ -14,5 +17,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="25dp" />
+        android:layout_marginBottom="15dp" />
+
+    <ImageButton
+        android:id="@+id/Next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/img_btn_next" />
+
+    <ImageButton
+        android:id="@+id/Previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/img_btn_previous" />
+
+    <ImageButton
+        android:id="@+id/Play"
+        style="@android:style/Widget.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:src="@drawable/img_btn_play_pressed" />
+    <!--ImageButton
+        android:id="@+id/Plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="drawable/up" />
+    <ImageButton
+        android:id="@+id/Minus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="drawable/down" /-->
 </FrameLayout>

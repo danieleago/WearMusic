@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -153,8 +154,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private void detectShake(SensorEvent event) {
         long now = System.currentTimeMillis();
 
-
-
         if((now - mShakeTime) > DIRECTION_TIME_MS) {
             mShakeTime = now;
 
@@ -170,6 +169,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //UP
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
+
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
                 mTextValues.setText("volumesu\n");
                 sendCommand("volumesu");
@@ -186,6 +186,10 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //LEFT
             else if(gY < (- DIRECTION_THRESHOLD_MIN) && gY > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD) {
+
+                ImageView img= (ImageView) mView.findViewById(R.id.Next);
+                img.setImageResource(R.drawable.img_btn_next_pressed);
+
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
                 mTextValues.setText("avanti");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
@@ -195,12 +199,22 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //RIGHT
             else if(gY > DIRECTION_THRESHOLD_MIN && gY < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
+
+                ImageView img= (ImageView) mView.findViewById(R.id.Previous);
+                img.setImageResource(R.drawable.img_btn_previous_pressed);
+
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
                 mTextValues.setText("pause/play\n");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("pause");
             }
             else {
+
+                ImageView img= (ImageView) mView.findViewById(R.id.Next);
+                img.setImageResource(R.drawable.img_btn_next);
+                img= (ImageView) mView.findViewById(R.id.Previous);
+                img.setImageResource(R.drawable.img_btn_previous);
+
                 mView.setBackgroundColor(Color.BLACK);
             }
         }
@@ -241,6 +255,30 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
     }
 
+    public void songPicked(View view){
+
+        int id = view.getId();
+        ImageView img;
+
+        switch (id){
+
+            case R.id.Next:
+                sendCommand("avanti");
+                img= (ImageView) mView.findViewById(R.id.Next);
+                img.setImageResource(R.drawable.img_btn_next_pressed);
+                break;
+
+            case R.id.Previous:
+                sendCommand("pause");
+                img= (ImageView) mView.findViewById(R.id.Previous);
+                img.setImageResource(R.drawable.img_btn_previous_pressed);
+                break;
+
+            default: Log.i(TAG, "BUTTON TO IMPLEMENT");
+
+        }
+    }
+
     private void sendCommand(String msg) {
 /*
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
@@ -254,7 +292,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                     Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
         }*/
 
-        Log.i(TAG, "SEND MESSAGE DIO CAN");
+        Log.i(TAG, "SEND MESSAGE");
         new SenderThread("/wear_message", msg).start();
 
     }

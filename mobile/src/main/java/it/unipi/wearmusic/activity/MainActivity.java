@@ -70,50 +70,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        mGoogleApiClient.connect();
-        if(playIntent==null){
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-
-
-        requestPermission();
-        songView = (ListView)findViewById(R.id.song_list);
-        songList = new ArrayList<Song>();
-        getSongList();
-        Collections.sort(songList, new Comparator<Song>(){
-            public int compare(Song a, Song b){
-                return a.getTitle().compareTo(b.getTitle());
-            }
-        });
-
-
-        SongAdapter songAdt = new SongAdapter(this, songList);
-
-        songView.setAdapter(songAdt);
-
-        setController();
-
-    }
-
     //connect to the service
     private ServiceConnection musicConnection = new ServiceConnection(){
 
@@ -133,8 +89,47 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         }
     };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mGoogleApiClient.connect();
+        if(playIntent==null){
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        requestPermission();
+        songView = (ListView)findViewById(R.id.song_list);
+        songList = new ArrayList<Song>();
+        getSongList();
+        Collections.sort(songList, new Comparator<Song>(){
+            public int compare(Song a, Song b){
+                return a.getTitle().compareTo(b.getTitle());
+            }
+        });
 
 
+        SongAdapter songAdt = new SongAdapter(this, songList);
+
+        songView.setAdapter(songAdt);
+
+        setController();
+
+    }
 
     public void getSongList() {
         //retrieve song info

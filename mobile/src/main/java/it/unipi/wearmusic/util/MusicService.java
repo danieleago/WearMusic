@@ -31,9 +31,9 @@ public class MusicService extends Service implements
     //current position
     private int songPosn;
     private final IBinder musicBind = new MusicBinder();
-    private String songTitle="";
-    private static final int NOTIFY_ID=1;
-    private boolean shuffle=false;
+    private String songTitle = "";
+    private static final int NOTIFY_ID = 1;
+    private boolean shuffle = false;
     private Random rand;
 
     public void onCreate() {
