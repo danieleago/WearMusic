@@ -255,7 +255,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
     }
 
-    public void songPicked(View view){
+    public void buttonClick(View view){
 
         int id = view.getId();
         ImageView img;
