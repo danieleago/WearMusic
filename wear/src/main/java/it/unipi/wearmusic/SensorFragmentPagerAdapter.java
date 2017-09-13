@@ -10,12 +10,18 @@ import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
+
 public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
+
+    private static int i=0;
+;
+    private int SENSOR = 1 ;
+    private int TITLE = 0 ;
     GoogleApiClient mGACA;
-    private int[] sensorTypes = {
-            Sensor.TYPE_ACCELEROMETER,
-             -1 //Sensor.TYPE_GYROSCOPE //
-    };
+    private int[] fragmentTypes = {
+            TITLE,
+            SENSOR
+             };
 
 
     public SensorFragmentPagerAdapter(FragmentManager fm, GoogleApiClient mGAC ) {
@@ -25,7 +31,14 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public Fragment getFragment(int row, int column) {
-        return SensorFragment.newInstance(sensorTypes[column] , mGACA);
+        if(fragmentTypes[column] == SENSOR)
+            return SensorFragment.newInstance(Sensor.TYPE_ACCELEROMETER , mGACA);
+        else if (fragmentTypes[column] == TITLE)
+            return TitleFragment.newInstance("TOPA");
+        else{
+            return null;
+        }
+
     }
 
     @Override
@@ -35,6 +48,6 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int row) {
-        return sensorTypes.length;
+        return fragmentTypes.length;
     }
 }
