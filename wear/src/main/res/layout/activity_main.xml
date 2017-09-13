@@ -10,4 +10,5 @@
     app:roundLayout="@layout/round_activity_wear"
     android:keepScreenOn="true">
 
+
 </android.support.wearable.view.WatchViewStub>

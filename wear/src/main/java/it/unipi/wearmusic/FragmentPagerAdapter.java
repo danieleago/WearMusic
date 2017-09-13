@@ -12,7 +12,7 @@ import android.view.View;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 
-public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
+public class FragmentPagerAdapter extends FragmentGridPagerAdapter {
 
     private static final String TAG = "WearMusic";
     private int SENSOR = 1 ;
@@ -24,7 +24,7 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
              };
 
 
-    public SensorFragmentPagerAdapter(FragmentManager fm, GoogleApiClient mGAC ) {
+    public FragmentPagerAdapter(FragmentManager fm, GoogleApiClient mGAC ) {
         super(fm);
         mGACA = mGAC;
 
@@ -36,7 +36,7 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
         if(fragmentTypes[column] == SENSOR)
             return SensorFragment.newInstance(Sensor.TYPE_ACCELEROMETER , mGACA);
         else if (fragmentTypes[column] == TITLE)
-            return TitleFragment.newInstance("Titolo");
+            return TitleFragment.newInstance(mGACA);
         else{
             return null;
         }

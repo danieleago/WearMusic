@@ -1,46 +1,31 @@
 package it.unipi.wearmusic;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
-import android.util.FloatMath;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
-import it.unipi.wearmusic.util.ListenerService;
 
-
-public class MainActivity extends Activity
-        implements  View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-        {
+public class MainActivity extends Activity  implements  View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "WearMusic";
-    private static final String PRESSURE_KEY = "command";
+    private static final String TITLE_KEY = "title";
+    private static final String PATH = "/InfoSong";
 
 /*
      @Override
@@ -71,7 +56,7 @@ public class MainActivity extends Activity
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
-                pager.setAdapter(new SensorFragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
+                pager.setAdapter(new FragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
 
                 DotsPageIndicator indicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
                 indicator.setPager(pager);
@@ -109,6 +94,8 @@ public class MainActivity extends Activity
 
     @Override
     public void onConnected(Bundle connectionHint) {
+
+        //Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
         Log.d(TAG, "onConnected: " + connectionHint);
     }
 
@@ -136,4 +123,8 @@ public class MainActivity extends Activity
     public void onClick(View view) {
 
             }
-        }
+
+
+
+
+}

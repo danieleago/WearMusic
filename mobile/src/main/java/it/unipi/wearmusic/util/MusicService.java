@@ -130,6 +130,7 @@ public class MusicService extends Service implements
         //get song
         Song playSong = songs.get(songPosn);
         //get id
+        MainActivity.updateTitle(playSong.getTitle());
         long currSong = playSong.getID();
         //set uri
         Uri trackUri = ContentUris.withAppendedId(

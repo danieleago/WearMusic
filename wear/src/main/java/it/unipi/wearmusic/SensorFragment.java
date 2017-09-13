@@ -19,8 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -33,22 +41,25 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final float SHAKE_THRESHOLD = 1.2f;
+    private static final float DIRECROIN_THRESHOLD_Z = 1f;
     private static final float DIRECTION_THRESHOLD_MIN = 0.6f;
     private static final float DIRECTION_THRESHOLD_MAX = 1f;
     private static final int DIRECTION_TIME_MS =700;
+    private static final String INCREASE_VOLUME = "increase volume";
+    private static final String DECREASE_VOLUME = "decrease volume";
+    private static final String PLAY = "play";
+    private static final String NEXT = "next";
+    private static final String PREVIOUS = "previous";
 
     private static final String COMMAND_KEY = "command";
     private static final String TAG = "WearMusic";
     private static GoogleApiClient mGoogleApiClient;
 
     private View mView;
-    //private TextView mTextTitle;
-    //private TextView mTextValues;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private int mSensorType;
     private long mShakeTime = 0;
-    private boolean gesture = false;
 
     Vibrator vibrator;
     long[] vibrationPattern = {0, 100, 300, 100};
@@ -77,22 +88,32 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             switch (id){
 
-                case R.id.Next:
-                    sendCommand("avanti");
+                case R.id.Next: mView.setBackgroundColor(Color.rgb(100, 100, 0));
+                    vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+                    sendCommand(NEXT);
                     break;
 
                 case R.id.Previous:
-                    sendCommand("dietro");
+                    mView.setBackgroundColor(Color.rgb(100, 0, 0));
+                    vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+                    sendCommand(PREVIOUS);
                     break;
                 case R.id.Play:
-                    sendCommand("pause");
+                    mView.setBackgroundColor(Color.rgb(0, 100, 100));
+                    vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+                    sendCommand(PLAY);
                     break;
 
                 case R.id.Minus:
-                    sendCommand("volumegiu");
+                    mView.setBackgroundColor(Color.rgb(0, 0, 100));
+                    vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+                    sendCommand(DECREASE_VOLUME);
                     break;
                 case R.id.Plus:
-                    sendCommand("volumesu");
+                    mView.setBackgroundColor(Color.rgb(0, 100, 0));
+                    vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+
+                    sendCommand(INCREASE_VOLUME);
                     break;
 
 
@@ -183,14 +204,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             return;
         }
 
-
-
         if(getView().getLeft() == 0)
         detectShake(event);
-
-
-
-
 
     }
 
@@ -223,7 +238,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
                 
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
-                sendCommand("volumesu");
+                sendCommand(PREVIOUS);
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
             }
 
@@ -231,7 +246,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             else if(gX < (- DIRECTION_THRESHOLD_MIN) && gX > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 100, 0));
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-                sendCommand("volumegiu");
+                sendCommand(NEXT);
             }
 
             //LEFT
@@ -240,7 +255,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
-                sendCommand("avanti");
+                sendCommand(INCREASE_VOLUME);
             }
 
             //RIGHT
@@ -248,7 +263,13 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-                sendCommand("pause");
+                sendCommand(DECREASE_VOLUME);
+            }
+            else if(gZ > DIRECROIN_THRESHOLD_Z ) {
+
+                mView.setBackgroundColor(Color.rgb(0, 100, 100));
+                vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
+                sendCommand(PLAY);
             }
             else {
                 mView.setBackgroundColor(Color.BLACK);
@@ -272,7 +293,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
-
 
     private void sendCommand(String msg) {
 

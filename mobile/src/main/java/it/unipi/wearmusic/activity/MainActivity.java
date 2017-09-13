@@ -28,8 +28,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
@@ -61,12 +65,22 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private boolean pause = false;
     private static final String TAG = "WearMusic";
     private static final String COMMAND_KEY = "command";
-    private GoogleApiClient mGoogleApiClient;
+    private static final String TITLE_KEY = "title";
+    private static final String PATH = "/InfoSong";
+    private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
     private SeekBar seekBar;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();;
     //connect to the service
+
+    private static final String INCREASE_VOLUME = "increase volume";
+    private static final String DECREASE_VOLUME = "decrease volume";
+    private static final String PLAY = "play";
+    private static final String NEXT = "next";
+    private static final String PREVIOUS = "previous";
+
+
     private ServiceConnection musicConnection = new ServiceConnection(){
 
         @Override
@@ -368,7 +382,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 button.setImageResource(R.drawable.img_btn_next);
             }
         }, 500);
-
         initProcessBar();
     }
 
@@ -440,6 +453,19 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         }
     }
 
+    public static void updateTitle(String title) {
+
+        Log.i(TAG,"updateTitle"+title);
+        PutDataMapRequest putDataMapReq =
+                PutDataMapRequest.create(PATH);
+        putDataMapReq.getDataMap().putString(TITLE_KEY, title);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+
+    }
+
+
     public void requestPermission(){
 
         // Here, thisActivity is the current activity
@@ -475,9 +501,9 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(mess.compareTo("avanti")==0){
+                if(mess.compareTo(NEXT)==0){
                     clickNext(null);
-                }else if(mess.compareTo("pause")==0){
+                }else if(mess.compareTo(PLAY)==0){
                     clickPlay(null);
                     /*if(isPlaying()) {
                         musicSrv.pausePlayer();
@@ -486,11 +512,11 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                         musicSrv.playSong();
                         ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
                     }*/
-                }else if(mess.compareTo("volumegiu")==0){
+                }else if(mess.compareTo(DECREASE_VOLUME)==0){
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
-                }else if(mess.compareTo("volumesu")==0){
+                }else if(mess.compareTo(INCREASE_VOLUME)==0){
                     managerAudio.adjustVolume(ADJUST_RAISE,0);
-                }else if(mess.compareTo("dietro")==0){
+                }else if(mess.compareTo(PREVIOUS)==0){
                     clickPrevious(null);
                 }
 
