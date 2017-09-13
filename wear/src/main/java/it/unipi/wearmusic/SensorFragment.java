@@ -221,15 +221,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //UP
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
-                Log.i(TAG,"valori:"+
-                        " isRemoving--> "+this.isRemoving()+
-                        " isVisible--> "+this.isVisible()+
-                        " getUserVisibleHint--> "+this.getUserVisibleHint()+
-                        " isInLayout--> "+this.isInLayout()+
-                        " getAllowEnterTransitionOverlap--> "+this.getAllowEnterTransitionOverlap()+
-                        " getEnterTransition--> "+this.getEnterTransition().getTransitionProperties()
-
-                );
+                
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
                 sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);

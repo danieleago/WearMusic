@@ -36,7 +36,7 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
         if(fragmentTypes[column] == SENSOR)
             return SensorFragment.newInstance(Sensor.TYPE_ACCELEROMETER , mGACA);
         else if (fragmentTypes[column] == TITLE)
-            return TitleFragment.newInstance("TOPA");
+            return TitleFragment.newInstance("Titolo");
         else{
             return null;
         }

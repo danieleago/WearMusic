@@ -71,31 +71,7 @@ public class MainActivity extends Activity
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
-
-                pager.setOnPageChangeListener(new GridViewPager.OnPageChangeListener() {
-
-
-                    @Override
-                    public void onPageScrolled(int i, int i1, float v, float v1, int i2, int i3) {
-
-                        Log.i(TAG,"1valore :"+i+" altro: "+i1);
-                    }
-
-                    @Override
-                    public void onPageSelected(int i, int i1) {
-                        Log.i(TAG,"2valore :"+i+" altro: "+i1);
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int arg0) {
-                        Log.i(TAG,"2valore :");
-
-                    }
-                });
-
-
                 pager.setAdapter(new SensorFragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
-
 
                 DotsPageIndicator indicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
                 indicator.setPager(pager);

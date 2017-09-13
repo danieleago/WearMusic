@@ -358,7 +358,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     public void clickNext(View view) {
 
         musicSrv.playNext();
-        final ImageButton button = (ImageButton) view.findViewById(R.id.Next);
+        final ImageButton button = (ImageButton) findViewById(R.id.Next);
         button.setImageResource(R.drawable.img_btn_next_pressed);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -375,7 +375,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     public void clickPrevious(View view) {
 
         musicSrv.playPrev();
-        final ImageButton button = (ImageButton) view.findViewById(R.id.Previous);
+        final ImageButton button = (ImageButton) findViewById(R.id.Previous);
         button.setImageResource(R.drawable.img_btn_previous_pressed);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
