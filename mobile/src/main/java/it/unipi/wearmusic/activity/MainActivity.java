@@ -221,11 +221,9 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
-        /*if(playbackPaused){
-            setController();
-            playbackPaused=false;
+        if (!isPlaying()){
+            ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
         }
-        controller.show(0);*/
     }
 
     @Override
@@ -268,8 +266,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     protected void onPause(){
         super.onPause();
         //paused=true;
-        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
+        //Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+        //mGoogleApiClient.disconnect();
 
     }
 
