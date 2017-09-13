@@ -27,6 +27,7 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
     public SensorFragmentPagerAdapter(FragmentManager fm, GoogleApiClient mGAC ) {
         super(fm);
         mGACA = mGAC;
+
         }
 
     @Override

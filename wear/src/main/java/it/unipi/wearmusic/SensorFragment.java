@@ -11,6 +11,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.transition.Transition;
+import android.transition.TransitionValues;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +107,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         Log.i(TAG,"on create");
         vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
 
-        setUserVisibleHint(false);
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
 
@@ -140,7 +141,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             bplus.setOnClickListener(listener);
 
 
-        return mView;
+       return mView;
     }
 
 
@@ -160,9 +161,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
         Log.i(TAG,"onPause");
         mSensorManager.unregisterListener(this);
-
     }
-
+/*
     @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
@@ -174,7 +174,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             gesture=false;
         }
     }
-
+*/
     @Override
     public void onSensorChanged(SensorEvent event) {
         // If sensor is unreliable, then just return
@@ -182,8 +182,11 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         {
             return;
         }
-        if(gesture)
-            detectShake(event);
+
+
+
+        if(getView().getLeft() == 0)
+        detectShake(event);
 
 
 
@@ -218,7 +221,15 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //UP
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
+                Log.i(TAG,"valori:"+
+                        " isRemoving--> "+this.isRemoving()+
+                        " isVisible--> "+this.isVisible()+
+                        " getUserVisibleHint--> "+this.getUserVisibleHint()+
+                        " isInLayout--> "+this.isInLayout()+
+                        " getAllowEnterTransitionOverlap--> "+this.getAllowEnterTransitionOverlap()+
+                        " getEnterTransition--> "+this.getEnterTransition().getTransitionProperties()
 
+                );
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
                 sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);

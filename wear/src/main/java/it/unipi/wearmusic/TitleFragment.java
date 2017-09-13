@@ -34,6 +34,8 @@ public class TitleFragment extends Fragment {
     private static String title;
     private View mView;
 
+    private static final String TAG = "WearMusic";
+
     public static TitleFragment newInstance(String t) {
         TitleFragment f = new TitleFragment();
         title = t;
@@ -52,6 +54,8 @@ public class TitleFragment extends Fragment {
         mView = inflater.inflate(R.layout.title, container, false);
         mTextTitle = (TextView) mView.findViewById(R.id.text_title);
         mTextTitle.setText(title);
+        Log.i(TAG,"title mview id"+ mView.getId());
+        Log.i(TAG,"title :"+ mView.toString());
         return  mView;
     }
 

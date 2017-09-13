@@ -15,7 +15,9 @@ import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -40,6 +42,23 @@ public class MainActivity extends Activity
     private static final String TAG = "WearMusic";
     private static final String PRESSURE_KEY = "command";
 
+/*
+     @Override
+     public boolean onTouchEvent(MotionEvent motionEvent){
+         super.onTouchEvent(motionEvent);
+         //if(motionEvent.)
+        Log.i(TAG,"on touch");
+
+         return true;
+     }
+
+     @Override
+     public boolean  onKeyUp(int i,KeyEvent ke){
+
+         Log.i(TAG,"on key");
+         return true;
+     }
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +92,7 @@ public class MainActivity extends Activity
 
                     }
                 });
+
 
                 pager.setAdapter(new SensorFragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
 
