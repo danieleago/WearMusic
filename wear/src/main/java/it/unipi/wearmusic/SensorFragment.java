@@ -199,6 +199,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
 
 
+
+
     }
 
     @Override

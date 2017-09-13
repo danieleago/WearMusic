@@ -52,6 +52,7 @@ public class MainActivity extends Activity
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
 
+
                 pager.setOnPageChangeListener(new GridViewPager.OnPageChangeListener() {
 
                     @Override

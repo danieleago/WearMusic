@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,6 +40,7 @@ import it.unipi.wearmusic.R;
 import it.unipi.wearmusic.util.MusicService;
 import it.unipi.wearmusic.util.Song;
 import it.unipi.wearmusic.util.SongAdapter;
+import it.unipi.wearmusic.util.Utilities;
 
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
@@ -45,7 +48,8 @@ import static android.media.AudioManager.ADJUST_RAISE;
 
 public class MainActivity extends Activity implements MessageApi.MessageListener,MediaPlayerControl,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        SeekBar.OnSeekBarChangeListener{
 
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE =1 ;
@@ -54,10 +58,14 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound=false;
+    private boolean pause = false;
     private static final String TAG = "WearMusic";
     private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
+    private SeekBar seekBar;
+    // Handler to update UI timer, progress bar etc,.
+    private Handler mHandler = new Handler();;
     //connect to the service
     private ServiceConnection musicConnection = new ServiceConnection(){
 
@@ -115,6 +123,9 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
+
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(this);
 
     }
 
@@ -213,6 +224,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     @Override
     public void pause() {
+        pause = true;
         musicSrv.pausePlayer();
     }
 
@@ -300,12 +312,44 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         Log.e(TAG, "connection failed");
     }
 
-    // ------------------------------ onClick calls----------------------------------------------------------
+    // --------------------------- Override OnSeekBarChangeListener methods ------------------------------------
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // remove message Handler from updating progress bar
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        /*int totalDuration = getDuration();
+        int currentPosition = Utilities.progressToTimer(seekBar.getProgress(), totalDuration);
+
+        // forward or backward to certain seconds
+        seekTo(currentPosition);
+
+        // update timer progress again
+        updateProgressBar();
+        */
+
+    }
+    // ------------------------------ onClick calls ----------------------------------------------------------
 
     public void songPicked(View view){
 
+
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
+
+        initProcessBar();
+
         if (!isPlaying()){
             ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
         }
@@ -324,6 +368,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 button.setImageResource(R.drawable.img_btn_next);
             }
         }, 500);
+
+        initProcessBar();
     }
 
     public void clickPrevious(View view) {
@@ -339,18 +385,31 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 button.setImageResource(R.drawable.img_btn_previous);
             }
         }, 500);
+
+        initProcessBar();
+
     }
 
     public void clickPlay(View view){
 
-        ImageButton button = (ImageButton) view.findViewById(R.id.Play);
-
         if (isPlaying()){
-            musicSrv.pausePlayer();
-            button.setImageResource(R.drawable.img_btn_play);
+
+            pause();
+            stopProgressBar();
+
         } else {
-            musicSrv.playSong();
-            button.setImageResource(R.drawable.img_btn_pause);
+            if (pause == true) {
+                start();
+                // Updating progress bar
+                updateProgressBar();
+
+            }else{
+                musicSrv.playSong();
+                initProcessBar();
+            }
+
+
+
         }
 
     }
@@ -417,26 +476,76 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             @Override
             public void run() {
                 if(mess.compareTo("avanti")==0){
-                    musicSrv.playNext();
+                    clickNext(null);
                 }else if(mess.compareTo("pause")==0){
-                    if(isPlaying()) {
+                    clickPlay(null);
+                    /*if(isPlaying()) {
                         musicSrv.pausePlayer();
                         ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_play);
                     } else {
                         musicSrv.playSong();
                         ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
-                    }
+                    }*/
                 }else if(mess.compareTo("volumegiu")==0){
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
                 }else if(mess.compareTo("volumesu")==0){
                     managerAudio.adjustVolume(ADJUST_RAISE,0);
                 }else if(mess.compareTo("dietro")==0){
-                    musicSrv.playPrev();
+                    clickPrevious(null);
                 }
 
             }
         });
     }
 
+    /**
+     * Update timer on seekbar
+     * */
+
+    public void initProcessBar(){
+
+        seekBar.setProgress(0);
+        seekBar.setMax(100);
+        updateProgressBar();
+    }
+
+    public void updateProgressBar() {
+
+        if (pause) {
+            pause = false;
+            ImageButton button = (ImageButton) findViewById(R.id.Play);
+            button.setImageResource(R.drawable.img_btn_pause);
+        }
+        mHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+
+    public void stopProgressBar() {
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        ImageButton button = (ImageButton) findViewById(R.id.Play);
+        button.setImageResource(R.drawable.img_btn_play);
+    }
+
+    /**
+     * Background Runnable thread
+     * */
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+            long totalDuration = getDuration();
+            long currentDuration = getCurrentPosition();
+
+            // Displaying Total Duration time
+            ((TextView)findViewById(R.id.totalTimeText)).setText(Utilities.milliSecondsToTimer(totalDuration));
+            // Displaying time completed playing
+            ((TextView)findViewById(R.id.currentTimeText)).setText(Utilities.milliSecondsToTimer(currentDuration));
+
+            // Updating progress bar
+            int progress = (int)(Utilities.getProgressPercentage(currentDuration, totalDuration));
+            //Log.d("Progress", ""+progress);
+            seekBar.setProgress(progress);
+
+            // Running this thread after 100 milliseconds
+            mHandler.postDelayed(this, 100);
+        }
+    };
 
 }
