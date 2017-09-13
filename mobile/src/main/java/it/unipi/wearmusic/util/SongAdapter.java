@@ -43,8 +43,6 @@ public class SongAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
 
-        //View v=View.inflate(convertView, R.layout.itme_sliding_menu,null);
-
         LinearLayout songLay = (LinearLayout)songInf.inflate
                 (R.layout.song, parent, false);
         //get title and artist views

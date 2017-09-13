@@ -252,7 +252,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             //LEFT
             else if(gY < (- DIRECTION_THRESHOLD_MIN) && gY > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD) {
                 /*
-                ImageView img= (ImageView) mView.findViewById(R.id.Next);
+                ImageView= (ImageView) mView.findViewById(R.id.Next);
                 if(img == null){
                     Log.d(TAG, "img null");
                 }else{

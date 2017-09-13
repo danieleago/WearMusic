@@ -48,6 +48,10 @@ public class MusicService extends Service implements
 
     }
 
+    public boolean isShuffle(){
+        return shuffle;
+    }
+
     public void setShuffle(){
         if(shuffle) shuffle=false;
         else shuffle=true;

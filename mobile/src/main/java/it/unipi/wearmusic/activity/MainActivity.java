@@ -2,6 +2,7 @@ package it.unipi.wearmusic.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -9,16 +10,22 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.view.menu.ActionMenuItem;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.TextView;
@@ -65,8 +72,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound=false;
-    private MusicController controller;
-    private boolean paused=false, playbackPaused=false;
+    //private MusicController controller;
+    //private boolean paused=true;
     private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
@@ -127,7 +134,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
         songView.setAdapter(songAdt);
 
-        setController();
+        //setController();
 
     }
 
@@ -214,11 +221,19 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
-        if(playbackPaused){
+        /*if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
+        controller.show(0);*/
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
@@ -226,6 +241,11 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         switch (item.getItemId()) {
             case R.id.action_shuffle:
                 musicSrv.setShuffle();
+                if (musicSrv.isShuffle()){
+                    item.setIcon(ContextCompat.getDrawable(this,R.drawable.img_btn_shuffle_pressed));
+                } else {
+                    item.setIcon(ContextCompat.getDrawable(this,R.drawable.img_btn_shuffle));
+                }
                 break;
             case R.id.action_end:
                 stopService(playIntent);
@@ -247,7 +267,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     @Override
     protected void onPause(){
         super.onPause();
-        paused=true;
+        //paused=true;
         Wearable.MessageApi.removeListener(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
 
@@ -256,16 +276,16 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     @Override
     protected void onResume(){
         super.onResume();
-        if(paused){
-            setController();
+        /*if(paused){
+            //setController();
             paused=false;
-        }
+        }*/
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
-        controller.hide();
+        //controller.hide();
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -275,7 +295,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     @Override
     public void pause() {
-        playbackPaused=true;
+        //playbackPaused=true;
         musicSrv.pausePlayer();
     }
 
@@ -335,7 +355,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         return 0;
     }
 
-    private void setController(){
+    /*private void setController(){
         controller = new MusicController(this);
         controller.setPrevNextListeners(new View.OnClickListener() {
             @Override
@@ -352,25 +372,68 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         controller.setAnchorView(findViewById(R.id.song_list));
         controller.setEnabled(true);
 
+    }*/
+
+    public void clickNext(View view) {
+        musicSrv.playNext();
+        final ImageButton button = (ImageButton) view.findViewById(R.id.Next);
+        button.setImageResource(R.drawable.img_btn_next_pressed);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                button.setImageResource(R.drawable.img_btn_next);
+            }
+        }, 500);
     }
 
-    private void playNext(){
+    public void clickPrevious(View view) {
+        musicSrv.playPrev();
+        final ImageButton button = (ImageButton) view.findViewById(R.id.Previous);
+        button.setImageResource(R.drawable.img_btn_previous_pressed);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                button.setImageResource(R.drawable.img_btn_previous);
+            }
+        }, 500);
+    }
+
+    public void clickPlay(View view){
+
+        ImageButton button = (ImageButton) view.findViewById(R.id.Play);
+
+        if (isPlaying()){
+            musicSrv.pausePlayer();
+            button.setImageResource(R.drawable.img_btn_play);
+        } else {
+            musicSrv.playSong();
+            button.setImageResource(R.drawable.img_btn_pause);
+        }
+
+
+    }
+
+    /*private void playNext(){
         musicSrv.playNext();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
-    }
+        controller.show(0);*/
+    //}
 
-    private void playPrev(){
+    /*private void playPrev(){
         musicSrv.playPrev();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
-    }
+        controller.show(0);*/
+    //}
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -390,7 +453,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
 
     //@Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
+    /*public void onDataChanged(DataEventBuffer dataEvents) {
 
         for(DataEvent event : dataEvents) {
             if(event.getType() == DataEvent.TYPE_CHANGED) {
@@ -405,24 +468,28 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 // DataItem deleted
             }
         }
-    }
+    }*/
+
     public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(mess.compareTo("avanti")==0){
-                    playNext();
+                    musicSrv.playNext();
                 }else if(mess.compareTo("pause")==0){
-                    if(isPlaying())
-                        pause();
-                    else
-                        start();
+                    if(isPlaying()) {
+                        musicSrv.pausePlayer();
+                        ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_play);
+                    } else {
+                        musicSrv.playSong();
+                        ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
+                    }
                 }else if(mess.compareTo("volumegiu")==0){
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
                 }else if(mess.compareTo("volumesu")==0){
                     managerAudio.adjustVolume(ADJUST_RAISE,0);
                 }else if(mess.compareTo("dietro")==0){
-                    playPrev();
+                    musicSrv.playPrev();
                 }
 
             }

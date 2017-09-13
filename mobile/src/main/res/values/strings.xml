@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Wear Music</string>
+    <string name="Shuffle">Shuffle</string>
+    <string name="End">End</string>
 
     <!-- Strings related to Settings -->
 

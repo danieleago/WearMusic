@@ -5,21 +5,22 @@
     android:layout_height="wrap_content"
     android:onClick="songPicked"
     android:orientation="vertical"
-    android:padding="5dp" >
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/song_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF99"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_weight="5.56" />
 
     <TextView
         android:id="@+id/song_artist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF99"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp" />
 
 </LinearLayout>
