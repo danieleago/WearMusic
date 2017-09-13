@@ -57,17 +57,17 @@ public class MainActivity extends Activity
                     @Override
                     public void onPageScrolled(int i, int i1, float v, float v1, int i2, int i3) {
 
-                        Log.i("PROVA","1valore :"+i+" altro: "+i1);
+                        Log.i(TAG,"1valore :"+i+" altro: "+i1);
                     }
 
                     @Override
                     public void onPageSelected(int i, int i1) {
-                        Log.i("PROVA","2valore :"+i+" altro: "+i1);
+                        Log.i(TAG,"2valore :"+i+" altro: "+i1);
                     }
 
                     @Override
                     public void onPageScrollStateChanged(int arg0) {
-                        Log.i("PROVA","2valore :");
+                        Log.i(TAG,"2valore :");
 
                     }
                 });

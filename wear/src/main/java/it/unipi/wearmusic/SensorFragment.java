@@ -47,7 +47,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private static final int DIRECTION_TIME_MS =700;
 
     private static final String COMMAND_KEY = "command";
-    private static final String TAG = "HandheldActivity";
+    private static final String TAG = "WearMusic";
     private static GoogleApiClient mGoogleApiClient;
 
     private View mView;
@@ -106,12 +106,14 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
 
             }
-            Log.i(TAG, "BUTTON TO IMPLEMENT");
+           // Log.i(TAG, "BUTTON TO IMPLEMENT");
         }
     };
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(TAG,"on create");
         vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
 
 
@@ -135,6 +137,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
 
 
+        Log.i(TAG,"on create view");
             mView = inflater.inflate(R.layout.button, container, false);
             ImageButton bn = (ImageButton)mView.findViewById(R.id.Next);
             ImageButton bpl = (ImageButton)mView.findViewById(R.id.Play);
@@ -155,6 +158,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.i(TAG,"on resume");
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL*5);
@@ -163,6 +168,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     @Override
     public void onPause() {
         super.onPause();
+
+        Log.i(TAG,"onPause");
         mSensorManager.unregisterListener(this);
 
     }
@@ -170,6 +177,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
+        Log.i(TAG,"set menu visibility");
         if (visible) {
             gesture=true;
         }else{
@@ -222,7 +230,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
 
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
-                //mTextValues.setText("volumesu\n");
                 sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
             }
@@ -230,25 +237,14 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             //DOWN
             else if(gX < (- DIRECTION_THRESHOLD_MIN) && gX > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 100, 0));
-                //mTextValues.setText("volumegiu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("volumegiu");
             }
 
             //LEFT
             else if(gY < (- DIRECTION_THRESHOLD_MIN) && gY > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD) {
-                /*
-                ImageView= (ImageView) mView.findViewById(R.id.Next);
-                if(img == null){
-                    Log.d(TAG, "img null");
-                }else{
-                    Log.d(TAG, "img not null");
 
-                    img.setImageResource(R.drawable.img_btn_next_pressed);
-                }
-                */
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
-                //mTextValues.setText("avanti");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
                 sendCommand("avanti");
@@ -256,25 +252,12 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
             //RIGHT
             else if(gY > DIRECTION_THRESHOLD_MIN && gY < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
-                /*
-                ImageView img= (ImageView) mView.findViewById(R.);
-                if(img == null){
-                    Log.d(TAG, "img null");
-                }else{
-
-                    img.setImageResource(R.drawable.img_btn_previous_pressed);
-                    Log.d(TAG, "img not null");
-                }*/
 
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
-                //mTextValues.setText("pause/play\n");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("pause");
             }
             else {
-                /*
-
-                */
                 mView.setBackgroundColor(Color.BLACK);
             }
         }
@@ -299,46 +282,13 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
 
     private void sendCommand(String msg) {
-/*
-        if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
-            mGoogleApiClient.connect();
-        if(mGoogleApiClient!=null){
-            PutDataMapRequest putDataMapReq =
-                    PutDataMapRequest.create("/Command");
-                    putDataMapReq.getDataMap().putString(COMMAND_KEY, msg);
-            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-            PendingResult<DataApi.DataItemResult> pendingResult =
-                    Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        }*/
+
 
         Log.i(TAG, "SEND MESSAGE");
         new SenderThread("/wear_message", msg).start();
 
     }
-/*
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        ImageView img;
 
-        switch (id){
-
-            case R.id.Next:
-                sendCommand("avanti");
-                //img= (ImageView) mView.findViewById(R.id.Next);
-                //img.setImageResource(R.drawable.img_btn_next_pressed);
-                break;
-
-            case R.id.Previous:
-                sendCommand("pause");
-                //img= (ImageView) mView.findViewById(R.id.Previous);
-                //img.setImageResource(R.drawable.img_btn_previous_pressed);
-                break;
-
-        }
-        Log.i(TAG, "BUTTON TO IMPLEMENT");
-    }
-*/
     class SenderThread extends Thread {
         String path;
         String msg;
@@ -348,7 +298,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         }
         public void run() {
 
-            Log.i(TAG, "Dio");
             NodeApi.GetConnectedNodesResult nodes =
                     Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
             for (Node node : nodes.getNodes()) {

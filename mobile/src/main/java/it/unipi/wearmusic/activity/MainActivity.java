@@ -39,7 +39,6 @@ import it.unipi.wearmusic.util.MusicService;
 import it.unipi.wearmusic.util.Song;
 import it.unipi.wearmusic.util.SongAdapter;
 
-import static android.content.ContentValues.TAG;
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 
@@ -55,6 +54,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound=false;
+    private static final String TAG = "WearMusic";
+    private static final String COMMAND_KEY = "command";
     private GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
     //connect to the service
