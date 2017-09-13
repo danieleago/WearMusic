@@ -11,30 +11,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.wearable.view.WatchViewStub;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import android.view.View.OnClickListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class SensorFragment extends Fragment implements SensorEventListener,
@@ -116,7 +105,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         Log.i(TAG,"on create");
         vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
 
-
+        setUserVisibleHint(false);
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
 
@@ -193,9 +182,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         {
             return;
         }
-
         if(gesture)
-                detectShake(event);
+            detectShake(event);
 
 
 

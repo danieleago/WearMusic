@@ -46,14 +46,15 @@ public class MainActivity extends Activity
 
         setupConnection();
 
+        Log.i(TAG," on create main");
         setContentView(R.layout.activity_main);
        WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
 
-
                 pager.setOnPageChangeListener(new GridViewPager.OnPageChangeListener() {
+
 
                     @Override
                     public void onPageScrolled(int i, int i1, float v, float v1, int i2, int i3) {

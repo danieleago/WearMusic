@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.hardware.Sensor;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -13,8 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
 
-    private static int i=0;
-;
+    private static final String TAG = "WearMusic";
     private int SENSOR = 1 ;
     private int TITLE = 0 ;
     GoogleApiClient mGACA;
@@ -27,10 +27,11 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
     public SensorFragmentPagerAdapter(FragmentManager fm, GoogleApiClient mGAC ) {
         super(fm);
         mGACA = mGAC;
-    }
+        }
 
     @Override
     public Fragment getFragment(int row, int column) {
+
         if(fragmentTypes[column] == SENSOR)
             return SensorFragment.newInstance(Sensor.TYPE_ACCELEROMETER , mGACA);
         else if (fragmentTypes[column] == TITLE)
@@ -38,7 +39,6 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
         else{
             return null;
         }
-
     }
 
     @Override
@@ -50,4 +50,6 @@ public class SensorFragmentPagerAdapter extends FragmentGridPagerAdapter {
     public int getColumnCount(int row) {
         return fragmentTypes.length;
     }
+
+
 }
