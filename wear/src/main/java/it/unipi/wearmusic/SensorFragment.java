@@ -45,16 +45,14 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private static final float DIRECTION_THRESHOLD_MIN = 0.6f;
     private static final float DIRECTION_THRESHOLD_MAX = 1f;
     private static final int DIRECTION_TIME_MS =700;
-    private static final float ROTATION_THRESHOLD = 5.0f;
-    private static final int ROTATION_WAIT_TIME_MS = 700;
 
     private static final String COMMAND_KEY = "command";
     private static final String TAG = "HandheldActivity";
     private static GoogleApiClient mGoogleApiClient;
 
     private View mView;
-    private TextView mTextTitle;
-    private TextView mTextValues;
+    //private TextView mTextTitle;
+    //private TextView mTextValues;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private int mSensorType;
@@ -125,11 +123,9 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         if(args != null) {
             mSensorType = args.getInt("sensorType");
         }
-
-        if(mSensorType!=-1) {
             mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
             mSensor = mSensorManager.getDefaultSensor(mSensorType);
-        }
+
 
     }
 
@@ -137,16 +133,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if(mSensorType!=-1) {
 
-            mView = inflater.inflate(R.layout.sensor, container, false);
-            gesture = true;
-            mTextTitle = (TextView) mView.findViewById(R.id.text_title);
-            mTextTitle.setText("scegli il comando");
-            mTextValues = (TextView) mView.findViewById(R.id.text_values);
-        }else{
-            gesture = false;
-            Log.i(TAG, " valore " + String.valueOf(mSensorType));
+
             mView = inflater.inflate(R.layout.button, container, false);
             ImageButton bn = (ImageButton)mView.findViewById(R.id.Next);
             ImageButton bpl = (ImageButton)mView.findViewById(R.id.Play);
@@ -159,12 +147,9 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             bminus.setOnClickListener(listener);
             bplus.setOnClickListener(listener);
 
-        }
 
         return mView;
     }
-
-
 
 
     @Override
@@ -172,37 +157,38 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         super.onResume();
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
-        if(mSensorType!=-1)
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL*5);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(mSensorType!=-1)
         mSensorManager.unregisterListener(this);
+
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+            gesture=true;
+        }else{
+
+            gesture=false;
+        }
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         // If sensor is unreliable, then just return
-        if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
+        if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE )
         {
             return;
         }
 
-        /*
-        mTextValues.setText(
-                "x = " + Float.toString(event.values[0]) + "\n" +
-                "y = " + Float.toString(event.values[1]) + "\n" +
-                "z = " + Float.toString(event.values[2]) + "\n"
-        );
-        */
+        if(gesture)
+                detectShake(event);
 
-
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && gesture) {
-            detectShake(event);
-        }
 
 
     }
@@ -236,7 +222,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {
 
                 mView.setBackgroundColor(Color.rgb(100, 0, 0));
-                mTextValues.setText("volumesu\n");
+                //mTextValues.setText("volumesu\n");
                 sendCommand("volumesu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
             }
@@ -244,7 +230,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             //DOWN
             else if(gX < (- DIRECTION_THRESHOLD_MIN) && gX > (- DIRECTION_THRESHOLD_MAX) && gForce < SHAKE_THRESHOLD ) {
                 mView.setBackgroundColor(Color.rgb(100, 100, 0));
-                mTextValues.setText("volumegiu");
+                //mTextValues.setText("volumegiu");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("volumegiu");
             }
@@ -262,7 +248,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 }
                 */
                 mView.setBackgroundColor(Color.rgb(0, 100, 0));
-                mTextValues.setText("avanti");
+                //mTextValues.setText("avanti");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
 
                 sendCommand("avanti");
@@ -281,7 +267,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 }*/
 
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
-                mTextValues.setText("pause/play\n");
+                //mTextValues.setText("pause/play\n");
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand("pause");
             }
