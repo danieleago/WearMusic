@@ -125,12 +125,22 @@ public class MusicService extends Service implements
     }
 
     public void playSong() {
-
+        int temp;
         player.reset();
         //get song
         Song playSong = songs.get(songPosn);
+        temp = songPosn-1;
+
+        if (temp < 0)
+            temp = songs.size() - 1;
+        Song songPrev = songs.get(temp);
+
+        temp = songPosn+1;
+        if (temp >= songs.size())
+            temp=0;
+        Song songNext = songs.get(temp);
         //get id
-        MainActivity.updateTitle(playSong.getTitle());
+        MainActivity.updateTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
         long currSong = playSong.getID();
         //set uri
         Uri trackUri = ContentUris.withAppendedId(

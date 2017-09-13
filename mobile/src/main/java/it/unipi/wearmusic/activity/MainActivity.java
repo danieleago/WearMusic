@@ -66,6 +66,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private static final String TAG = "WearMusic";
     private static final String COMMAND_KEY = "command";
     private static final String TITLE_KEY = "title";
+    private static final String TITLE_NEXT_KEY = "title next";
+    private static final String TITLE_PREV_KEY = "title prev";
     private static final String PATH = "/InfoSong";
     private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
@@ -453,12 +455,13 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         }
     }
 
-    public static void updateTitle(String title) {
+    public static void updateTitle(String title,String titlen,String titlep) {
 
         Log.i(TAG,"updateTitle"+title);
-        PutDataMapRequest putDataMapReq =
-                PutDataMapRequest.create(PATH);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH);
         putDataMapReq.getDataMap().putString(TITLE_KEY, title);
+        putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titlen);
+        putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlep);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);

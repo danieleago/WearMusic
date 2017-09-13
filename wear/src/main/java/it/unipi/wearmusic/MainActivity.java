@@ -25,6 +25,8 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "WearMusic";
     private static final String TITLE_KEY = "title";
+    private static final String TITLE_NEXT_KEY = "title next";
+    private static final String TITLE_PREV_KEY = "title prev";
     private static final String PATH = "/InfoSong";
 
 /*
@@ -132,7 +134,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
                 DataItem item = event.getDataItem();
                 if(item.getUri().getPath().compareTo(PATH) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    updateTitle(dataMap.getString(TITLE_KEY),"dio","porco");
+                    updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 // DataItem deleted
@@ -145,7 +147,14 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             @Override
             public void run() {
                 TextView tv = (TextView) findViewById(R.id.text_title);
-                tv.setText("titile: " + title);
+                if(tv!=null)
+                tv.setText("song current: " + title);
+                TextView tvp = (TextView) findViewById(R.id.text_previous_title);
+                if(tvp!=null)
+                tvp.setText("song prev: " + titlep);
+                TextView tvn = (TextView) findViewById(R.id.text_next_title);
+                if(tvn!=null)
+                tvn.setText("song next: " + titlen);
             }
         });}
 
