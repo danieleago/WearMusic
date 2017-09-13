@@ -33,7 +33,7 @@ import com.google.android.gms.wearable.Wearable;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
-public class TitleFragment extends Fragment implements DataApi.DataListener,
+public class TitleFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener  {
 
@@ -58,7 +58,7 @@ public class TitleFragment extends Fragment implements DataApi.DataListener,
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+        //Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
     }
 
     @Override
@@ -90,13 +90,6 @@ public class TitleFragment extends Fragment implements DataApi.DataListener,
     }
 
 
-    public void updateTitle(String title,String titlen,String titlep) {
-        Log.i(TAG,"cambio titolo");
-
-
-
-
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -113,7 +106,7 @@ public class TitleFragment extends Fragment implements DataApi.DataListener,
 
 
     }
-
+/*
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         Log.i(TAG,"onDataChanged title");
@@ -137,7 +130,6 @@ public class TitleFragment extends Fragment implements DataApi.DataListener,
 
                     }finally {
 
-                        mView.refreshDrawableState();
 
                     }
                 }
@@ -146,4 +138,6 @@ public class TitleFragment extends Fragment implements DataApi.DataListener,
             }
         }
     }
+*/
+
 }

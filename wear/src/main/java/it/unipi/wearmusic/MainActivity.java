@@ -20,7 +20,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
 
-public class MainActivity extends Activity  implements  View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends Activity  implements DataApi.DataListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private TextView mTextView;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "WearMusic";
@@ -95,7 +95,7 @@ public class MainActivity extends Activity  implements  View.OnClickListener, Go
     @Override
     public void onConnected(Bundle connectionHint) {
 
-        //Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+        Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
         Log.d(TAG, "onConnected: " + connectionHint);
     }
 
@@ -123,8 +123,31 @@ public class MainActivity extends Activity  implements  View.OnClickListener, Go
     public void onClick(View view) {
 
             }
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        Log.i(TAG,"onDataChanged title");
+        for(DataEvent event : dataEventBuffer) {
+            if(event.getType() == DataEvent.TYPE_CHANGED) {
+                // DataItem changed
+                DataItem item = event.getDataItem();
+                if(item.getUri().getPath().compareTo(PATH) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    updateTitle(dataMap.getString(TITLE_KEY),"dio","porco");
+                }
+            } else if (event.getType() == DataEvent.TYPE_DELETED) {
+                // DataItem deleted
+            }
+        }
+    }
 
-
+    private void updateTitle(final String title,final String titlen,final String titlep) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv = (TextView) findViewById(R.id.text_title);
+                tv.setText("titile: " + title);
+            }
+        });}
 
 
 }
