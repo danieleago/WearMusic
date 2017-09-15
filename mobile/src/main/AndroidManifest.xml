@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="it.unipi.iet.maps.MSG_RECEIVED" />
+                <action android:name="it.unipi.wearmusic.Received" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

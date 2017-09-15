@@ -2,10 +2,12 @@ package it.unipi.wearmusic;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -68,7 +70,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();;
     //connect to the service
-
+    private Intent intent;
     private static final String INCREASE_VOLUME = "increase volume";
     private static final String DECREASE_VOLUME = "decrease volume";
     private static final String PLAY = "play";
@@ -118,6 +120,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        intent = new Intent(this, ListenerService.class);
         managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -142,6 +146,13 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
 
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI(intent);
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -222,6 +233,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     protected void onResume(){
         super.onResume();
         Log.i(TAG,"resume");
+        startService(intent);
+        registerReceiver(broadcastReceiver, new IntentFilter(ListenerService.ACTION_MSG_RECEIVED));
 
         //mGoogleApiClient.connect();
     }
@@ -313,7 +326,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
-        ListenerService.setParameters(musicSrv,managerAudio);
+        //ListenerService.setParameters(musicSrv,managerAudio);
 
     }
 
@@ -492,8 +505,12 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         }
 
     }
-
-    /*public void updateCommand(final String mess) {
+    private void updateUI(Intent intent) {
+        String command = intent.getStringExtra("command");
+        Log.i(TAG,"info" +command);
+        updateCommand(command);
+    }
+    public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -511,7 +528,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
             }
         });
-    }*/
+    }
 
     /**
      * Update timer on seekbar
