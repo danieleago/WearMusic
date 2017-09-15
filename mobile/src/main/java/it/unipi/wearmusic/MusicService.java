@@ -1,4 +1,4 @@
-package it.unipi.wearmusic.util;
+package it.unipi.wearmusic;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -16,9 +16,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
 
-import it.unipi.wearmusic.R;
-import it.unipi.wearmusic.activity.MainActivity;
-
 
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -35,6 +32,7 @@ public class MusicService extends Service implements
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = false;
     private Random rand;
+    public boolean pause;
 
     public void onCreate() {
         //create the service

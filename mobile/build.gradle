@@ -9,7 +9,6 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -26,7 +25,5 @@ dependencies {
     })
     wearApp project(':wear')
     compile 'com.google.android.gms:play-services:10.2.0'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
 }

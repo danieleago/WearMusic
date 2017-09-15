@@ -1,4 +1,4 @@
-package it.unipi.wearmusic.util;
+package it.unipi.wearmusic;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import it.unipi.wearmusic.R;
 
 public class SongAdapter extends BaseAdapter {
 

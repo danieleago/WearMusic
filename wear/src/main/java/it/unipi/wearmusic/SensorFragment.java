@@ -11,8 +11,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.transition.Transition;
-import android.transition.TransitionValues;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +39,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final float SHAKE_THRESHOLD = 1.2f;
-    private static final float DIRECROIN_THRESHOLD_Z = 1f;
+    private static final float DIRECROIN_THRESHOLD_Z = 1.1f;
     private static final float DIRECTION_THRESHOLD_MIN = 0.6f;
     private static final float DIRECTION_THRESHOLD_MAX = 1f;
     private static final int DIRECTION_TIME_MS =700;
@@ -264,12 +262,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
                 mView.setBackgroundColor(Color.rgb(0, 0, 100));
                 vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
                 sendCommand(DECREASE_VOLUME);
-            }
-            else if(gZ > DIRECROIN_THRESHOLD_Z ) {
-
-                mView.setBackgroundColor(Color.rgb(0, 100, 100));
-                vibrator.vibrate(vibrationPattern, indexInPatternToRepeat);
-                sendCommand(PLAY);
             }
             else {
                 mView.setBackgroundColor(Color.BLACK);

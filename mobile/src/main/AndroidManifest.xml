@@ -10,7 +10,7 @@
             android:allowBackup="true"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name">
-        <activity android:name=".activity.MainActivity"
+        <activity android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
@@ -18,9 +18,19 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="it.unipi.iet.maps.MSG_RECEIVED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
-        <service android:name=".util.MusicService" />
+        <service android:name=".MusicService" />
+        <service android:name=".ListenerService">
+            <intent-filter>
+            <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
 
+            </intent-filter>
+        </service>
+        />
     </application>
 
 </manifest>

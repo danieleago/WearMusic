@@ -1,7 +1,9 @@
 package it.unipi.wearmusic;
 
 import android.app.Activity;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
@@ -29,23 +31,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     private static final String TITLE_PREV_KEY = "title prev";
     private static final String PATH = "/InfoSong";
 
-/*
-     @Override
-     public boolean onTouchEvent(MotionEvent motionEvent){
-         super.onTouchEvent(motionEvent);
-         //if(motionEvent.)
-        Log.i(TAG,"on touch");
 
-         return true;
-     }
-
-     @Override
-     public boolean  onKeyUp(int i,KeyEvent ke){
-
-         Log.i(TAG,"on key");
-         return true;
-     }
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

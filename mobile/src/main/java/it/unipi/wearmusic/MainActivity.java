@@ -1,4 +1,4 @@
-package it.unipi.wearmusic.activity;
+package it.unipi.wearmusic;
 
 import android.Manifest;
 import android.app.Activity;
@@ -31,7 +31,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -40,17 +39,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import it.unipi.wearmusic.R;
-import it.unipi.wearmusic.util.MusicService;
-import it.unipi.wearmusic.util.Song;
-import it.unipi.wearmusic.util.SongAdapter;
-import it.unipi.wearmusic.util.Utilities;
-
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 
 
-public class MainActivity extends Activity implements MessageApi.MessageListener,MediaPlayerControl,
+public class MainActivity extends Activity implements MediaPlayerControl,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         SeekBar.OnSeekBarChangeListener{
@@ -62,7 +55,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound=false;
-    private boolean pause = false;
     private static final String TAG = "WearMusic";
     private static final String COMMAND_KEY = "command";
     private static final String TITLE_KEY = "title";
@@ -71,6 +63,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private static final String PATH = "/InfoSong";
     private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
+    //private ListenerService Ls;
     private SeekBar seekBar;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();;
@@ -81,7 +74,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private static final String PLAY = "play";
     private static final String NEXT = "next";
     private static final String PREVIOUS = "previous";
-
+    //private ListenerService LS;
 
     private ServiceConnection musicConnection = new ServiceConnection(){
 
@@ -90,6 +83,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
             //get service
             musicSrv = binder.getService();
+            Log.i(TAG,"binder");
             //pass list
             musicSrv.setList(songList);
             musicBound = true;
@@ -101,18 +95,22 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         }
     };
 
+
     // ----------------------- Override Activity methods --------------------------------------------------------
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mGoogleApiClient.connect();
         if(playIntent==null){
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
+
+        mGoogleApiClient.connect();
+        Log.i(TAG,"call set parameters");
+
     }
 
     @Override
@@ -126,7 +124,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
         requestPermission();
         songView = (ListView)findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
@@ -142,6 +139,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
+
 
     }
 
@@ -205,6 +203,9 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     @Override
     protected void onDestroy() {
 
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
+            mGoogleApiClient.disconnect();
+        }
         stopService(playIntent);
         musicSrv=null;
         super.onDestroy();
@@ -213,25 +214,21 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     @Override
     protected void onPause(){
         super.onPause();
-        //paused=true;
-        //Wearable.MessageApi.removeListener(mGoogleApiClient, this);
-        //mGoogleApiClient.disconnect();
 
     }
 
     @Override
     protected void onResume(){
         super.onResume();
+        Log.i(TAG,"resume");
 
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
+    Log.i(TAG,"on stop");
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
 
         super.onStop();
     }
@@ -240,7 +237,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     @Override
     public void pause() {
-        pause = true;
+        musicSrv.pause = true;
         musicSrv.pausePlayer();
     }
 
@@ -301,7 +298,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     }
 
     // ------------------------------- Override MessageListener method --------------------------------------
-
+/*
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         if(messageEvent.getPath().equals("/wear_message")) {
@@ -309,13 +306,14 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             updateCommand(msg);
         }
     }
-
+*/
     // ------------------------------ Override ConnectionCallback methods ----------------------------------
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
-        Wearable.MessageApi.addListener(mGoogleApiClient, this);
+        ListenerService.setParameters(musicSrv,managerAudio);
+
     }
 
     @Override
@@ -345,21 +343,11 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     public void onStopTrackingTouch(SeekBar seekBar) {
         // remove message Handler from updating progress bar
         mHandler.removeCallbacks(mUpdateTimeTask);
-        /*int totalDuration = getDuration();
-        int currentPosition = Utilities.progressToTimer(seekBar.getProgress(), totalDuration);
-
-        // forward or backward to certain seconds
-        seekTo(currentPosition);
-
-        // update timer progress again
-        updateProgressBar();
-        */
 
     }
     // ------------------------------ onClick calls ----------------------------------------------------------
 
     public void songPicked(View view){
-
 
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
@@ -413,7 +401,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             stopProgressBar();
 
         } else {
-            if (pause == true) {
+            if (musicSrv.pause == true) {
                 start();
                 // Updating progress bar
                 updateProgressBar();
@@ -508,13 +496,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                     clickNext(null);
                 }else if(mess.compareTo(PLAY)==0){
                     clickPlay(null);
-                    /*if(isPlaying()) {
-                        musicSrv.pausePlayer();
-                        ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_play);
-                    } else {
-                        musicSrv.playSong();
-                        ((ImageButton)findViewById(R.id.Play)).setImageResource(R.drawable.img_btn_pause);
-                    }*/
                 }else if(mess.compareTo(DECREASE_VOLUME)==0){
                     managerAudio.adjustVolume(ADJUST_LOWER,0);
                 }else if(mess.compareTo(INCREASE_VOLUME)==0){
@@ -540,8 +521,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     public void updateProgressBar() {
 
-        if (pause) {
-            pause = false;
+        if (musicSrv.pause) {
+            musicSrv.pause = false;
             ImageButton button = (ImageButton) findViewById(R.id.Play);
             button.setImageResource(R.drawable.img_btn_pause);
         }

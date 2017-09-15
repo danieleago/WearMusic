@@ -1,4 +1,4 @@
-package it.unipi.wearmusic.util;
+package it.unipi.wearmusic;
 
 public class Utilities {
 
