@@ -21,7 +21,11 @@
             <intent-filter>
                 <action android:name="it.unipi.wearmusic.Received" />
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            </intent-filter
+                ><intent-filter>
+            <action android:name="it.unipi.wearmusic.Title" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
         </activity>
         <service android:name=".MusicService" />
         <service android:name=".ListenerService">

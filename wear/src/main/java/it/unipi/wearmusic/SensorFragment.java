@@ -49,7 +49,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private static final String NEXT = "next";
     private static final String PREVIOUS = "previous";
 
-    private static final String COMMAND_KEY = "command";
     private static final String TAG = "WearMusic";
     private static GoogleApiClient mGoogleApiClient;
 
@@ -116,7 +115,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
 
             }
-           // Log.i(TAG, "BUTTON TO IMPLEMENT");
         }
     };
 
@@ -144,8 +142,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
         Log.i(TAG,"on create view");
             mView = inflater.inflate(R.layout.button, container, false);
             ImageButton bn = (ImageButton)mView.findViewById(R.id.Next);
@@ -158,7 +154,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             bpr.setOnClickListener(listener);
             bminus.setOnClickListener(listener);
             bplus.setOnClickListener(listener);
-
 
        return mView;
     }
@@ -181,19 +176,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         Log.i(TAG,"onPause");
         mSensorManager.unregisterListener(this);
     }
-/*
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        Log.i(TAG,"set menu visibility");
-        if (visible) {
-            gesture=true;
-        }else{
-
-            gesture=false;
-        }
-    }
-*/
     @Override
     public void onSensorChanged(SensorEvent event) {
         // If sensor is unreliable, then just return
@@ -213,9 +195,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     }
 
 
-    // References:
-    //  - http://jasonmcreynolds.com/?p=388
-    //  - http://code.tutsplus.com/tutorials/using-the-accelerometer-on-android--mobile-22125
     private void detectShake(SensorEvent event) {
         long now = System.currentTimeMillis();
 
@@ -226,11 +205,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             float gY = event.values[1] / SensorManager.GRAVITY_EARTH;
             float gZ = event.values[2] / SensorManager.GRAVITY_EARTH;
 
-            // gForce will be close to 1 when there is no movement
             float gForce = (float)Math.sqrt(gX*gX + gY*gY + gZ*gZ);
-
-            // Change background color if gForce exceeds threshold;
-            // otherwise, reset the color
 
             //UP
             if(gX > DIRECTION_THRESHOLD_MIN && gX < DIRECTION_THRESHOLD_MAX && gForce < SHAKE_THRESHOLD ) {

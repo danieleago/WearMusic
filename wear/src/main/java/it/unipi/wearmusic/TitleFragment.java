@@ -57,8 +57,6 @@ public class TitleFragment extends Fragment implements
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
     }
 
     @Override
@@ -74,9 +72,6 @@ public class TitleFragment extends Fragment implements
         return  mView;
     }
 
-
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -89,55 +84,16 @@ public class TitleFragment extends Fragment implements
 
     }
 
-
-
     @Override
     public void onConnected(Bundle bundle) {
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
-
     }
-/*
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        Log.i(TAG,"onDataChanged title");
-        for(DataEvent event : dataEventBuffer) {
-            if(event.getType() == DataEvent.TYPE_CHANGED) {
-                // DataItem changed
-                DataItem item = event.getDataItem();
-                if(item.getUri().getPath().compareTo(PATH) == 0) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    //TitleFragment.updateTitle(dataMap.getString(TITLE_KEY),"next","prev");
-                    //TitleFragment fragment_obj = (TitleFragment)getFragmentManager().findFragmentById(R.id.title_view);
-                    //TitleFragment.
-                    //updateTitle(dataMap.getString(TITLE_KEY),"next","prev");
-                    try {
-
-                        ((TextView) mView.findViewById(R.id.text_title)).setText(dataMap.getString(TITLE_KEY));
-                        ((TextView) mView.findViewById(R.id.text_next_title)).setText("next");
-                        ((TextView) mView.findViewById(R.id.text_previous_title)).setText("prev");
-
-                    }catch (RuntimeException re){
-
-                    }finally {
-
-
-                    }
-                }
-            } else if (event.getType() == DataEvent.TYPE_DELETED) {
-                // DataItem deleted
-            }
-        }
-    }
-*/
 
 }

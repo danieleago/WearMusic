@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -21,7 +22,12 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener{
 
+    private static final String TITLE_KEY = "title";
+    private static final String TITLE_NEXT_KEY = "title next";
+    private static final String TITLE_PREV_KEY = "title prev";
+    public static final String ACTION_UPDATE_TITLE = "it.unipi.wearmusic.Title";
     private static final String TAG = "WearMusic";
+    Intent intentTitle;
 
     //media player
     private MediaPlayer player;
@@ -39,6 +45,8 @@ public class MusicService extends Service implements
     public void onCreate() {
         //create the service
         super.onCreate();
+
+        intentTitle = new Intent(ACTION_UPDATE_TITLE);
         //initialize position
         songPosn = 0;
         //create player
@@ -141,10 +149,11 @@ public class MusicService extends Service implements
             temp=0;
         Song songNext = songs.get(temp);
         //get id
+
         if (shuffle)
-            MainActivity.updateTitle(playSong.getTitle() ,"", "");
+            sendTitle(playSong.getTitle(),"", "");
         else
-            MainActivity.updateTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
+            sendTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
 
         long currSong = playSong.getID();
         //set uri
@@ -216,5 +225,16 @@ public class MusicService extends Service implements
     public void onDestroy() {
         stopForeground(true);
     }
+
+    private void sendTitle(String title,String titlenext,String titleprev) {
+        if(intentTitle==null)
+            Log.i(TAG, "intentTitle null");
+
+        intentTitle.putExtra(TITLE_KEY,title);
+        intentTitle.putExtra(TITLE_PREV_KEY,titleprev);
+        intentTitle.putExtra(TITLE_NEXT_KEY,titlenext);
+        sendBroadcast(intentTitle);
+    }
+
 
 }

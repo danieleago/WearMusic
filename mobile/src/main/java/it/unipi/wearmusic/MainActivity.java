@@ -65,18 +65,21 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     private static final String PATH = "/InfoSong";
     private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
-    //private ListenerService Ls;
     private SeekBar seekBar;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();;
     //connect to the service
-    private Intent intent;
+    private Intent intentTitle;
+    private Intent intentCommand;
     private static final String INCREASE_VOLUME = "increase volume";
     private static final String DECREASE_VOLUME = "decrease volume";
     private static final String PLAY = "play";
     private static final String NEXT = "next";
     private static final String PREVIOUS = "previous";
-    //private ListenerService LS;
+    public static final String ACTION_UPDATE_TITLE = "it.unipi.wearmusic.Title";
+    public static final String ACTION_MSG_RECEIVED = "it.unipi.wearmusic.Received";
+
+
 
     private ServiceConnection musicConnection = new ServiceConnection(){
 
@@ -85,7 +88,6 @@ public class MainActivity extends Activity implements MediaPlayerControl,
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
             //get service
             musicSrv = binder.getService();
-            Log.i(TAG,"binder");
             //pass list
             musicSrv.setList(songList);
             musicBound = true;
@@ -121,7 +123,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        intent = new Intent(this, ListenerService.class);
+        intentCommand = new Intent(this, ListenerService.class);
+        intentTitle = new Intent(this, MusicService.class);
         managerAudio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -233,17 +236,15 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     protected void onResume(){
         super.onResume();
         Log.i(TAG,"resume");
-        startService(intent);
+        startService(intentTitle);
+        startService(intentCommand);
         registerReceiver(broadcastReceiver, new IntentFilter(ListenerService.ACTION_MSG_RECEIVED));
-
-        //mGoogleApiClient.connect();
+        registerReceiver(broadcastReceiver, new IntentFilter(MusicService.ACTION_UPDATE_TITLE));
     }
 
     @Override
     protected void onStop() {
-    Log.i(TAG,"on stop");
-
-
+        Log.i(TAG,"on stop");
         super.onStop();
     }
 
@@ -311,22 +312,11 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         return 0;
     }
 
-    // ------------------------------- Override MessageListener method --------------------------------------
-/*
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        if(messageEvent.getPath().equals("/wear_message")) {
-            String msg = new String(messageEvent.getData());
-            updateCommand(msg);
-        }
-    }
-*/
     // ------------------------------ Override ConnectionCallback methods ----------------------------------
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
-        //ListenerService.setParameters(musicSrv,managerAudio);
 
     }
 
@@ -461,7 +451,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         }
     }
 
-    public static void updateTitle(String title,String titlen,String titlep) {
+    private void updateTitle(String title,String titlep,String titlen) {
 
         Log.i(TAG,"updateTitle"+title);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH);
@@ -506,9 +496,18 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     }
     private void updateUI(Intent intent) {
-        String command = intent.getStringExtra("command");
-        Log.i(TAG,"info" +command);
-        updateCommand(command);
+        if(intent.getAction()== ACTION_MSG_RECEIVED) {
+            String command = intent.getStringExtra(COMMAND_KEY);
+            Log.i(TAG, "info" + command);
+            updateCommand(command);
+        }
+        if(intent.getAction()==ACTION_UPDATE_TITLE){
+            Log.i(TAG, "action update title");
+            String t = intent.getStringExtra(TITLE_KEY);
+            String tn = intent.getStringExtra(TITLE_NEXT_KEY);
+            String tp = intent.getStringExtra(TITLE_PREV_KEY);
+            updateTitle(t,tp,tn);
+        }
     }
     public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {

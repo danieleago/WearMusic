@@ -1,9 +1,7 @@
 package it.unipi.wearmusic;
 
 import android.app.Activity;
-import android.os.Binder;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
@@ -23,7 +21,7 @@ import com.google.android.gms.wearable.Wearable;
 
 
 public class MainActivity extends Activity  implements DataApi.DataListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private TextView mTextView;
+
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "WearMusic";
     private static final String TITLE_KEY = "title";
@@ -35,7 +33,6 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setupConnection();
 
         Log.i(TAG," on create main");
@@ -55,8 +52,6 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
 
     }
 
-
-
     private void setupConnection(){
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -69,7 +64,6 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     @Override
     protected void onStart() {
         super.onStart();
-
         if(mGoogleApiClient!=null)
             mGoogleApiClient.connect();
 
