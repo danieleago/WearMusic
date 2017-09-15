@@ -21,6 +21,8 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener{
 
+    private static final String TAG = "WearMusic";
+
     //media player
     private MediaPlayer player;
     //song list
@@ -123,6 +125,7 @@ public class MusicService extends Service implements
     }
 
     public void playSong() {
+        Log.i(TAG, "song position: " + songPosn);
         int temp;
         player.reset();
         //get song
@@ -138,7 +141,11 @@ public class MusicService extends Service implements
             temp=0;
         Song songNext = songs.get(temp);
         //get id
-        MainActivity.updateTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
+        if (shuffle)
+            MainActivity.updateTitle(playSong.getTitle() ,"", "");
+        else
+            MainActivity.updateTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
+
         long currSong = playSong.getID();
         //set uri
         Uri trackUri = ContentUris.withAppendedId(

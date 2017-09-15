@@ -202,8 +202,9 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     @Override
     protected void onDestroy() {
-
+        Log.i(TAG,"onDestroy");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected() ) {
+            Log.i(TAG,"disconnect");
             mGoogleApiClient.disconnect();
         }
         stopService(playIntent);
@@ -395,18 +396,22 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     public void clickPlay(View view){
 
+        // Verifico se c'è una canzone attiva
         if (isPlaying()){
-
+            // Metto in pausa la canzone
             pause();
             stopProgressBar();
 
         } else {
+            // Verifico se sono nella situazione di PAUSE o STOP
             if (musicSrv.pause == true) {
+                // Riattivo la canzone in pausa
                 start();
                 // Updating progress bar
                 updateProgressBar();
 
             }else{
+                // Inizio dalla prima canzone
                 musicSrv.playSong();
                 initProcessBar();
             }
@@ -488,7 +493,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     }
 
-    public void updateCommand(final String mess) {
+    /*public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -506,7 +511,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
             }
         });
-    }
+    }*/
 
     /**
      * Update timer on seekbar
