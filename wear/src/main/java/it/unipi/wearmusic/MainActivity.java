@@ -37,7 +37,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
 
         Log.i(TAG," on create main");
         setContentView(R.layout.activity_main);
-       WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);

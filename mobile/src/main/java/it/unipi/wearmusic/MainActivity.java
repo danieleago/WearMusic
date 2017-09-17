@@ -372,7 +372,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Do something after 100ms
+                //Do something after 500ms
                 button.setImageResource(R.drawable.img_btn_next);
             }
         }, 500);
@@ -388,7 +388,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Do something after 100ms
+                //Do something after 500ms
                 button.setImageResource(R.drawable.img_btn_previous);
             }
         }, 500);
@@ -571,11 +571,11 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
             // Updating progress bar
             int progress = (int)(Utilities.getProgressPercentage(currentDuration, totalDuration));
-            //Log.d("Progress", ""+progress);
+
             seekBar.setProgress(progress);
 
-            // Running this thread after 100 milliseconds
-            mHandler.postDelayed(this, 100);
+            // Running this thread after 500 milliseconds
+            mHandler.postDelayed(this, 500);
         }
     };
 

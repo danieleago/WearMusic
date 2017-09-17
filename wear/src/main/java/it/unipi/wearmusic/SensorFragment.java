@@ -74,8 +74,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
         return f;
     }
-    ImageButton.OnClickListener listener = new ImageButton.OnClickListener()
-    {
+
+    ImageButton.OnClickListener listener = new ImageButton.OnClickListener() {
 
         @Override
         public void onClick(View v)
