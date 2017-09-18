@@ -12,10 +12,13 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
@@ -105,6 +108,30 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
 
         mGoogleApiClient.connect();
         Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+
+        PendingResult<DataItemBuffer> results = Wearable.DataApi.getDataItems(mGoogleApiClient);
+        results.setResultCallback(new ResultCallback<DataItemBuffer>() {
+            @Override
+            public void onResult(DataItemBuffer dataItems) {
+                int i = dataItems.getCount();
+                if ( i != 0) {
+                    for (int j = 0; j < i; j++) {
+                        DataItem item = dataItems.get(j);
+                        if(item.getUri().getPath().compareTo(PATH_INFOSONG) == 0) {
+                            DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                            updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
+                        }
+                        if(item.getUri().getPath().compareTo(PATH_INFOSTATUS) == 0) {
+                            DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                            updateStatus(dataMap.getBoolean(STATUS_KEY));
+                        }
+
+                    }
+                }
+
+                dataItems.release();
+            }
+        });
 
     }
     @Override
