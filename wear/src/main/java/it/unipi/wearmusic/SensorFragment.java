@@ -47,6 +47,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
     private static final String PLAY = "play";
     private static final String NEXT = "next";
     private static final String PREVIOUS = "previous";
+    private static final String TITLE = "title";
 
     private static final String TAG = "WearMusic";
     private static GoogleApiClient mGoogleApiClient;
@@ -154,7 +155,8 @@ public class SensorFragment extends Fragment implements SensorEventListener,
             bminus.setOnClickListener(listener);
             bplus.setOnClickListener(listener);
 
-       return mView;
+
+        return mView;
     }
 
 
@@ -166,6 +168,7 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         if(mGoogleApiClient!=null && !mGoogleApiClient.isConnected())
             mGoogleApiClient.connect();
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL*5);
+        sendCommand(TITLE);
     }
 
     @Override
@@ -247,7 +250,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
 
     @Override
     public void onConnected(Bundle bundle) {
-
     }
 
     @Override

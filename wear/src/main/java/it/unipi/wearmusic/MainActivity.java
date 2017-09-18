@@ -156,6 +156,8 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                Log.i(TAG, "titolo da aggionare"+title);
                 TextView tv = (TextView) findViewById(R.id.text_title);
                 if(tv!=null)
                 tv.setText("song current: " + title);

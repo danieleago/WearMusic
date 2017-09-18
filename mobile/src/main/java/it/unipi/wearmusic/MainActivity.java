@@ -61,8 +61,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     private static final String TITLE_NEXT_KEY = "title next";
     private static final String TITLE_PREV_KEY = "title prev";
     private static final String STATUS_KEY = "status";
-    private static final String PATH_INFOSONG = "/InfoSong";
-    private static final String PATH_INFOSTATUS = "/InfoStatus";
+    private static final String PATH_INFO_SONG = "/InfoSong";
+    private static final String PATH_INFO_STATUS = "/InfoStatus";
 
     private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
@@ -98,7 +98,6 @@ public class MainActivity extends Activity implements MediaPlayerControl,
             musicBound = false;
         }
     };
-
 
 
     // ----------------------- Override Activity methods --------------------------------------------------------
@@ -324,8 +323,6 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     }
 
-
-
     @Override
     public void onConnectionSuspended(int cause) {
         Log.d(TAG, "onConnectionSuspended: " + cause);
@@ -465,14 +462,14 @@ public class MainActivity extends Activity implements MediaPlayerControl,
      */
     private void updateTitle(String title,String titlePrevious,String titleNext) {
 
-        Log.i(TAG,"updateTitle "+title);
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFOSONG);
-        putDataMapReq.getDataMap().putString(TITLE_KEY, title);
-        putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titleNext);
-        putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlePrevious);
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        
+            PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFO_SONG);
+            putDataMapReq.getDataMap().putString(TITLE_KEY, title);
+            putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titleNext);
+            putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlePrevious);
+            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+            PendingResult<DataApi.DataItemResult> pendingResult =
+                    Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
 
     }
 
@@ -483,7 +480,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     private void updateStatusPlayer(boolean status) {
 
         Log.i(TAG,"updateStatusPlayer "+ status);
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFOSTATUS);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFO_STATUS);
         putDataMapReq.getDataMap().putBoolean(STATUS_KEY, status);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
@@ -541,6 +538,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.i(TAG,"update Command"+mess);
                 if(mess.compareTo(NEXT)==0){
                     clickNext(null);
                 }else if(mess.compareTo(PLAY)==0){
@@ -551,6 +549,9 @@ public class MainActivity extends Activity implements MediaPlayerControl,
                     managerAudio.adjustVolume(ADJUST_RAISE,0);
                 }else if(mess.compareTo(PREVIOUS)==0){
                     clickPrevious(null);
+                }else if(mess.compareTo(TITLE_KEY)==0){
+                    Log.i(TAG,musicSrv.getSongTitle()+ musicSrv.getSongTitlePrev()+ musicSrv.getSongTitleNext());
+                    updateTitle(musicSrv.getSongTitle(),musicSrv.getSongTitlePrev(),musicSrv.getSongTitleNext());
                 }
 
             }
