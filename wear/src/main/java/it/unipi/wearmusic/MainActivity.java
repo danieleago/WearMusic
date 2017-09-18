@@ -70,17 +70,20 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
         if(mGoogleApiClient!=null)
             mGoogleApiClient.connect();
 
+        Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
 
-        Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
         Log.d(TAG, "onConnected: " + connectionHint);
     }
 
@@ -98,10 +101,14 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     protected void onResume() {
         super.onResume();
 
+        Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+
     }
     @Override
     protected void onPause() {
         super.onPause();
+
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
     }
 
     @Override

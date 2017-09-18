@@ -100,6 +100,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     };
 
 
+
     // ----------------------- Override Activity methods --------------------------------------------------------
 
     @Override
@@ -322,6 +323,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         updateStatusPlayer(musicSrv.isPause());
 
     }
+
+
 
     @Override
     public void onConnectionSuspended(int cause) {
