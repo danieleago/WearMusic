@@ -262,6 +262,7 @@ public class MusicService extends Service implements
             intentTitle.putExtra(TITLE_NEXT_KEY, "");
         } else {
 
+            Log.i(TAG, "sendTitle " +songTitle);
             intentTitle.putExtra(TITLE_KEY, songTitle);
             intentTitle.putExtra(TITLE_PREV_KEY, songTitlePrev);
             intentTitle.putExtra(TITLE_NEXT_KEY, songTitleNext);

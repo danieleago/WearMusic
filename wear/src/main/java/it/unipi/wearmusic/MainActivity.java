@@ -29,9 +29,9 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     private static final String TITLE_NEXT_KEY = "title next";
     private static final String TITLE_PREV_KEY = "title prev";
     private static final String STATUS_KEY = "status";
-    private static final String PATH_INFOSONG = "/InfoSong";
-    private static final String PATH_INFOSTATUS = "/InfoStatus";
-
+    private static final String PATH_INFO_SONG = "/InfoSong";
+    private static final String PATH_INFO_STATUS = "/InfoStatus";
+    private GridViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
         WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override public void onLayoutInflated(WatchViewStub stub) {
-                final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+               pager = (GridViewPager) findViewById(R.id.pager);
                 pager.setAdapter(new FragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
 
                 DotsPageIndicator indicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
@@ -81,6 +81,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     public void onConnected(Bundle connectionHint) {
 
         Wearable.DataApi.addListener(mGoogleApiClient, (DataApi.DataListener) this);
+
         Log.d(TAG, "onConnected: " + connectionHint);
     }
 
@@ -114,16 +115,16 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             if(event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
                 DataItem item = event.getDataItem();
-                if(item.getUri().getPath().compareTo(PATH_INFOSONG) == 0) {
+                if(item.getUri().getPath().compareTo(PATH_INFO_SONG) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
                 }
-                if(item.getUri().getPath().compareTo(PATH_INFOSTATUS) == 0) {
+                if(item.getUri().getPath().compareTo(PATH_INFO_STATUS) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateStatus(dataMap.getBoolean(STATUS_KEY));
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
-                // DataItem deleted
+
             }
         }
     }
@@ -133,10 +134,12 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             @Override
             public void run() {
                 ImageButton ib = (ImageButton) findViewById(R.id.Play);
-                if(status)
-                    ib.setImageResource(R.drawable.img_btn_play);
-                else
-                    ib.setImageResource(R.drawable.img_btn_pause);
+                if(ib!=null) {
+                    if (status)
+                        ib.setImageResource(R.drawable.img_btn_play);
+                    else
+                        ib.setImageResource(R.drawable.img_btn_pause);
+                }
             }
         });}
 
