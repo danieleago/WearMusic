@@ -41,7 +41,7 @@ public class MusicService extends Service implements
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = false;
     private Random rand;
-    public boolean pause;
+    private boolean pause;
 
     public String getSongTitle() {
         return songTitle;
@@ -53,6 +53,14 @@ public class MusicService extends Service implements
 
     public String getSongTitlePrev() {
         return songTitlePrev;
+    }
+
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     @Override

@@ -252,8 +252,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     @Override
     public void pause() {
-        musicSrv.pause = true;
-        updateStatusPlayer(musicSrv.pause);
+        musicSrv.setPause(true);
+        updateStatusPlayer(musicSrv.isPause());
         musicSrv.pausePlayer();
     }
 
@@ -319,6 +319,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
         updateTitle(musicSrv.getSongTitle(), musicSrv.getSongTitlePrev(), musicSrv.getSongTitleNext());
+        updateStatusPlayer(musicSrv.isPause());
 
     }
 
@@ -409,7 +410,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
         } else {
             // Verifico se sono nella situazione di PAUSE o STOP
-            if (musicSrv.pause == true) {
+            if (musicSrv.isPause() == true) {
                 // Riattivo la canzone in pausa
                 start();
                 // Updating progress bar
@@ -562,8 +563,8 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         seekBar.setProgress(0);
         seekBar.setMax(100);
 
-        musicSrv.pause = false;
-        updateStatusPlayer(musicSrv.pause);
+        musicSrv.setPause(false);
+        updateStatusPlayer(musicSrv.isPause());
         ImageButton button = (ImageButton) findViewById(R.id.Play);
         button.setImageResource(R.drawable.img_btn_pause);
 
@@ -572,11 +573,11 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     public void updateProgressBar() {
 
-        if (musicSrv.pause) {
+        if (musicSrv.isPause()) {
 
             // resume from status pause
-            musicSrv.pause = false;
-            updateStatusPlayer(musicSrv.pause);
+            musicSrv.setPause(false);
+            updateStatusPlayer(musicSrv.isPause());
             ImageButton button = (ImageButton) findViewById(R.id.Play);
             button.setImageResource(R.drawable.img_btn_pause);
         }
