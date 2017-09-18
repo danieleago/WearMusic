@@ -22,6 +22,7 @@ import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.WearableListenerService;
 
 
 public class MainActivity extends Activity  implements DataApi.DataListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -83,6 +84,7 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
 
         mGoogleApiClient.disconnect();
         Wearable.DataApi.removeListener(mGoogleApiClient, this);
+
     }
 
     @Override
