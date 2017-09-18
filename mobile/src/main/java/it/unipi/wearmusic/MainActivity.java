@@ -454,6 +454,12 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         }
     }
 
+    /**
+     * Update Info Page of the watch
+     * @param title
+     * @param titlep
+     * @param titlen
+     */
     private void updateTitle(String title,String titlep,String titlen) {
 
         Log.i(TAG,"updateTitle "+title);
@@ -467,6 +473,10 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     }
 
+    /**
+     * update button status of play/pause
+     * @param status
+     */
     private void updateStatusPlayer(boolean status) {
 
         Log.i(TAG,"updateStatusPlayer "+ status);
@@ -477,7 +487,6 @@ public class MainActivity extends Activity implements MediaPlayerControl,
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
 
     }
-
 
     public void requestPermission(){
 
@@ -509,6 +518,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
         }
 
     }
+
     private void updateUI(Intent intent) {
         if(intent.getAction()== ACTION_MSG_RECEIVED) {
             String command = intent.getStringExtra(COMMAND_KEY);
@@ -523,6 +533,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
             updateTitle(t,tp,tn);
         }
     }
+
     public void updateCommand(final String mess) {
         runOnUiThread(new Runnable() {
             @Override
@@ -551,12 +562,20 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
         seekBar.setProgress(0);
         seekBar.setMax(100);
+
+        musicSrv.pause = false;
+        updateStatusPlayer(musicSrv.pause);
+        ImageButton button = (ImageButton) findViewById(R.id.Play);
+        button.setImageResource(R.drawable.img_btn_pause);
+
         updateProgressBar();
     }
 
     public void updateProgressBar() {
 
         if (musicSrv.pause) {
+
+            // resume from status pause
             musicSrv.pause = false;
             updateStatusPlayer(musicSrv.pause);
             ImageButton button = (ImageButton) findViewById(R.id.Play);
@@ -566,6 +585,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     }
 
     public void stopProgressBar() {
+
         mHandler.removeCallbacks(mUpdateTimeTask);
         ImageButton button = (ImageButton) findViewById(R.id.Play);
         button.setImageResource(R.drawable.img_btn_play);
