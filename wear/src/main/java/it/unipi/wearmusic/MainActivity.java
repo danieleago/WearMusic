@@ -22,7 +22,6 @@ import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
-import com.google.android.gms.wearable.WearableListenerService;
 
 
 public class MainActivity extends Activity  implements DataApi.DataListener, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -33,8 +32,8 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     private static final String TITLE_NEXT_KEY = "title next";
     private static final String TITLE_PREV_KEY = "title prev";
     private static final String STATUS_KEY = "status";
-    private static final String PATH_INFOSONG = "/InfoSong";
-    private static final String PATH_INFOSTATUS = "/InfoStatus";
+    private static final String PATH_INFO_SONG = "/InfoSong";
+    private static final String PATH_INFO_STATUS = "/InfoStatus";
 
 
     @Override
@@ -49,10 +48,6 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             @Override public void onLayoutInflated(WatchViewStub stub) {
                 final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
                 pager.setAdapter(new FragmentPagerAdapter(getFragmentManager(),mGoogleApiClient));
-
-                DotsPageIndicator indicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
-                indicator.setPager(pager);
-
 
             }
         });
@@ -119,11 +114,11 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
                 if ( i != 0) {
                     for (int j = 0; j < i; j++) {
                         DataItem item = dataItems.get(j);
-                        if(item.getUri().getPath().compareTo(PATH_INFOSONG) == 0) {
+                        if(item.getUri().getPath().compareTo(PATH_INFO_SONG) == 0) {
                             DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                             updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
                         }
-                        if(item.getUri().getPath().compareTo(PATH_INFOSTATUS) == 0) {
+                        if(item.getUri().getPath().compareTo(PATH_INFO_STATUS) == 0) {
                             DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                             updateStatus(dataMap.getBoolean(STATUS_KEY));
                         }
@@ -153,11 +148,11 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             if(event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
                 DataItem item = event.getDataItem();
-                if(item.getUri().getPath().compareTo(PATH_INFOSONG) == 0) {
+                if(item.getUri().getPath().compareTo(PATH_INFO_SONG) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
                 }
-                if(item.getUri().getPath().compareTo(PATH_INFOSTATUS) == 0) {
+                if(item.getUri().getPath().compareTo(PATH_INFO_STATUS) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateStatus(dataMap.getBoolean(STATUS_KEY));
                 }

@@ -41,7 +41,7 @@ public class MusicService extends Service implements
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = false;
     private Random rand;
-    private boolean pause;
+    private boolean pause = true;
 
     public String getSongTitle() {
         return songTitle;
