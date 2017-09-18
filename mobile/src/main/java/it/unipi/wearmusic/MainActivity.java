@@ -32,7 +32,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -62,7 +61,10 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     private static final String TITLE_KEY = "title";
     private static final String TITLE_NEXT_KEY = "title next";
     private static final String TITLE_PREV_KEY = "title prev";
-    private static final String PATH = "/InfoSong";
+    private static final String STATUS_KEY = "status";
+    private static final String PATH_INFOSONG = "/InfoSong";
+    private static final String PATH_INFOSTATUS = "/InfoStatus";
+
     private static GoogleApiClient mGoogleApiClient;
     private AudioManager managerAudio;
     private SeekBar seekBar;
@@ -253,6 +255,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     @Override
     public void pause() {
         musicSrv.pause = true;
+        updateStatusPlayer(musicSrv.pause);
         musicSrv.pausePlayer();
     }
 
@@ -453,11 +456,22 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
     private void updateTitle(String title,String titlep,String titlen) {
 
-        Log.i(TAG,"updateTitle"+title);
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH);
+        Log.i(TAG,"updateTitle "+title);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFOSONG);
         putDataMapReq.getDataMap().putString(TITLE_KEY, title);
         putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titlen);
         putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlep);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+
+    }
+
+    private void updateStatusPlayer(boolean status) {
+
+        Log.i(TAG,"updateStatusPlayer "+ status);
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFOSTATUS);
+        putDataMapReq.getDataMap().putBoolean(STATUS_KEY, status);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
@@ -544,6 +558,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
         if (musicSrv.pause) {
             musicSrv.pause = false;
+            updateStatusPlayer(musicSrv.pause);
             ImageButton button = (ImageButton) findViewById(R.id.Play);
             button.setImageResource(R.drawable.img_btn_pause);
         }

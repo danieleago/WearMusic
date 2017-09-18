@@ -102,9 +102,8 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view) {}
 
-            }
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         Log.i(TAG,"onDataChanged title");
