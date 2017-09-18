@@ -37,12 +37,6 @@ public class TitleFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener  {
 
-
-    private static TextView mTextTitle;
-    private static TextView mTextTitleNext;
-    private static TextView mTextTitlePrev;
-    private static final String TITLE_KEY = "title";
-    private static final String PATH = "/InfoSong";
     private View mView;
 
     private static GoogleApiClient mGoogleApiClient;
@@ -64,11 +58,6 @@ public class TitleFragment extends Fragment implements
                              Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.title, container, false);
-        mTextTitle = (TextView) mView.findViewById(R.id.text_title);
-        mTextTitleNext = (TextView) mView.findViewById(R.id.text_next_title);
-        mTextTitlePrev = (TextView) mView.findViewById(R.id.text_previous_title);
-
-
         return  mView;
     }
 

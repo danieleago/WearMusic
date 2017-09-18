@@ -17,7 +17,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener{
@@ -37,11 +36,26 @@ public class MusicService extends Service implements
     private int songPosn;
     private final IBinder musicBind = new MusicBinder();
     private String songTitle = "";
+    private String songTitleNext = "";
+    private String songTitlePrev = "";
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = false;
     private Random rand;
     public boolean pause;
 
+    public String getSongTitle() {
+        return songTitle;
+    }
+
+    public String getSongTitleNext() {
+        return songTitleNext;
+    }
+
+    public String getSongTitlePrev() {
+        return songTitlePrev;
+    }
+
+    @Override
     public void onCreate() {
         //create the service
         super.onCreate();
@@ -150,10 +164,13 @@ public class MusicService extends Service implements
         Song songNext = songs.get(temp);
         //get id
 
-        if (shuffle)
-            sendTitle(playSong.getTitle(),"", "");
-        else
-            sendTitle(playSong.getTitle() ,songNext.getTitle(),songPrev.getTitle());
+
+        songTitle = playSong.getTitle();
+        songTitleNext = songNext.getTitle();
+        songTitlePrev = songPrev.getTitle();
+
+        // send info to MainActivity through Intent
+        sendTitle();
 
         long currSong = playSong.getID();
         //set uri
@@ -226,13 +243,22 @@ public class MusicService extends Service implements
         stopForeground(true);
     }
 
-    private void sendTitle(String title,String titlenext,String titleprev) {
+    private void sendTitle() {
         if(intentTitle==null)
             Log.i(TAG, "intentTitle null");
 
-        intentTitle.putExtra(TITLE_KEY,title);
-        intentTitle.putExtra(TITLE_PREV_KEY,titleprev);
-        intentTitle.putExtra(TITLE_NEXT_KEY,titlenext);
+        if (shuffle){
+
+            intentTitle.putExtra(TITLE_KEY, songTitle);
+            intentTitle.putExtra(TITLE_PREV_KEY, "");
+            intentTitle.putExtra(TITLE_NEXT_KEY, "");
+        } else {
+
+            intentTitle.putExtra(TITLE_KEY, songTitle);
+            intentTitle.putExtra(TITLE_PREV_KEY, songTitlePrev);
+            intentTitle.putExtra(TITLE_NEXT_KEY, songTitleNext);
+        }
+
         sendBroadcast(intentTitle);
     }
 

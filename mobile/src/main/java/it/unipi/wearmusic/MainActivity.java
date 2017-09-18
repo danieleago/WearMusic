@@ -43,7 +43,6 @@ import java.util.Comparator;
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 
-
 public class MainActivity extends Activity implements MediaPlayerControl,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -80,7 +79,6 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     private static final String PREVIOUS = "previous";
     public static final String ACTION_UPDATE_TITLE = "it.unipi.wearmusic.Title";
     public static final String ACTION_MSG_RECEIVED = "it.unipi.wearmusic.Received";
-
 
 
     private ServiceConnection musicConnection = new ServiceConnection(){
@@ -320,6 +318,7 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected");
+        updateTitle(musicSrv.getSongTitle(), musicSrv.getSongTitlePrev(), musicSrv.getSongTitleNext());
 
     }
 
@@ -457,16 +456,16 @@ public class MainActivity extends Activity implements MediaPlayerControl,
     /**
      * Update Info Page of the watch
      * @param title
-     * @param titlep
-     * @param titlen
+     * @param titlePrevious
+     * @param titleNext
      */
-    private void updateTitle(String title,String titlep,String titlen) {
+    private void updateTitle(String title,String titlePrevious,String titleNext) {
 
         Log.i(TAG,"updateTitle "+title);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(PATH_INFOSONG);
         putDataMapReq.getDataMap().putString(TITLE_KEY, title);
-        putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titlen);
-        putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlep);
+        putDataMapReq.getDataMap().putString(TITLE_NEXT_KEY, titleNext);
+        putDataMapReq.getDataMap().putString(TITLE_PREV_KEY, titlePrevious);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);

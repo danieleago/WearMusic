@@ -22,10 +22,6 @@ import it.unipi.wearmusic.MainActivity;
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 
-/**
- * Created by Franc on 03/09/2017.
- */
-
 public class ListenerService extends WearableListenerService{
 
     public static final String ACTION_MSG_RECEIVED = "it.unipi.wearmusic.Received";

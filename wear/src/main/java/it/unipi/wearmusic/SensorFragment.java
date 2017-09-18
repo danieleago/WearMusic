@@ -39,7 +39,6 @@ public class SensorFragment extends Fragment implements SensorEventListener,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final float SHAKE_THRESHOLD = 1.2f;
-    private static final float DIRECROIN_THRESHOLD_Z = 1.1f;
     private static final float DIRECTION_THRESHOLD_MIN = 0.6f;
     private static final float DIRECTION_THRESHOLD_MAX = 1f;
     private static final int DIRECTION_TIME_MS =700;
