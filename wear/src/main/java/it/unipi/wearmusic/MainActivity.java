@@ -7,6 +7,7 @@ import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,7 +28,9 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
     private static final String TITLE_KEY = "title";
     private static final String TITLE_NEXT_KEY = "title next";
     private static final String TITLE_PREV_KEY = "title prev";
-    private static final String PATH = "/InfoSong";
+    private static final String STATUS_KEY = "status";
+    private static final String PATH_INFOSONG = "/InfoSong";
+    private static final String PATH_INFOSTATUS = "/InfoStatus";
 
 
     @Override
@@ -111,15 +114,31 @@ public class MainActivity extends Activity  implements DataApi.DataListener, Vie
             if(event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
                 DataItem item = event.getDataItem();
-                if(item.getUri().getPath().compareTo(PATH) == 0) {
+                if(item.getUri().getPath().compareTo(PATH_INFOSONG) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     updateTitle(dataMap.getString(TITLE_KEY),dataMap.getString(TITLE_NEXT_KEY),dataMap.getString(TITLE_PREV_KEY));
+                }
+                if(item.getUri().getPath().compareTo(PATH_INFOSTATUS) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    updateStatus(dataMap.getBoolean(STATUS_KEY));
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 // DataItem deleted
             }
         }
     }
+
+    private void updateStatus(final boolean status) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ImageButton ib = (ImageButton) findViewById(R.id.Play);
+                if(status)
+                    ib.setImageResource(R.drawable.img_btn_play);
+                else
+                    ib.setImageResource(R.drawable.img_btn_pause);
+            }
+        });}
 
     private void updateTitle(final String title,final String titlen,final String titlep) {
         runOnUiThread(new Runnable() {
