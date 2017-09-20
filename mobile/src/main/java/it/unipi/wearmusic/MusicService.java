@@ -42,7 +42,16 @@ public class MusicService extends Service implements
     private boolean shuffle = false;
     private Random rand;
     private boolean pause = true;
+    private boolean stop = true;
 
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
+    }
     public String getSongTitle() {
         return songTitle;
     }

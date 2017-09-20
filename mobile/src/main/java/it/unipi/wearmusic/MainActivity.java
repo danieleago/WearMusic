@@ -410,13 +410,15 @@ public class MainActivity extends Activity implements MediaPlayerControl,
 
         } else {
             // Verifico se sono nella situazione di PAUSE o STOP
-            if (musicSrv.isPause() == true) {
+
+            if (musicSrv.isStop() == false) {
                 // Riattivo la canzone in pausa
                 start();
                 // Updating progress bar
                 updateProgressBar();
 
             }else{
+                musicSrv.setStop(false);
                 // Inizio dalla prima canzone
                 musicSrv.playSong();
                 initProcessBar();
